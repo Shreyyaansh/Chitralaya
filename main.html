@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lan
+    <meta charset="UTF-8" />
+    <!-- Page text uses UTF-8 encoding (so Devanagari and emoji render correctly). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- makes th layout nice on mobile devices. -->
+    <title>Chitralaya</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari&family=Playfair+Display&display=swap"
+      rel="stylesheet"/>
+    <link rel="stylesheet" href="chitra.css" />
+    <script src="script.js"></script>
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="logo">
+        <span>चित्रालय|</span><span class="en">Chitralaya</span
+        ><span class="icon">🎨</span>
+      </div>
+
+      <div class="nav-links">
+        <a href="#home">Home</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+
+   <div class="banner" id="home">
+    <!-- User Actions -->
+    <div class="user-actions">
+      <a href="login.html" class="user-action-btn" id="user-link">
+        <img src="assets/user.png" alt="Login" class="icon-img">
+        <span id="user-text">Login</span>
+      </a>
+      <a href="cart.html" class="user-action-btn cart-btn">
+        <img src="assets/shopping-cart.png" alt="Cart" class="icon-img">
+        <span>Cart</span>
+        <span class="cart-count" id="cart-count">0</span>
+      </a>
+    </div>
+    <canvas id="spotlight"></canvas>
+    
+    <h1 class="heading">
+      <span class="hi">चित्रालय</span>
+      <span class="en">Where Colors Speak 🎨</span>
+    </h1>
+    
+    <div class="tagline">
+      <span class="tagline-text">✨ Original artworks, crafted with love — now available for you ✨</span>
+    </div>
+  </div>
+
+  <h1 class="hehe" id="gallery">PRODUCTS</h1>
+
+  <!-- Filter Buttons -->
+  <div class="filter-buttons">
+    <button class="filter-btn active" onclick="filterArtwork('all')">All</button>
+    <button class="filter-btn" onclick="filterArtwork('canvas')">Canvas</button>
+    <button class="filter-btn" onclick="filterArtwork('sketches')">Sketches</button>
+    <button class="filter-btn" onclick="filterArtwork('color')">Water Color</button>
+  </div>
+
+<div class="gallery">
+  <!-- Position 1: Radha Krishna -->
+  <div class="artwork-item card-1" data-category="all canvas" onclick="openProduct('hampstead-heath')">
+    <div class="artwork-image adjust-position-1">
+      <img src="assets/canvas/2.jpeg" alt="Radha Krishna" class="main-img">
+      <img src="assets/canvas/b.jpeg" alt="Radha Krishna Detail" class="hover-img">
+    </div>
+    <div class="artwork-info">
+      <h3 class="artwork-title">Radha Krishna</h3>
+      <div class="artwork-price">
+        <span class="current-price">Rs. 3,500.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Position 2: Serene Walkway Landscape -->
+  <div class="artwork-item card-2" data-category="all canvas" onclick="openProduct('borough-market')">
+    <div class="artwork-image adjust-position-2">
+      <img src="assets/canvas/3.jpeg" alt="Serene Walkway Landscape" class="main-img">
+      <img src="assets/canvas/a.jpeg" alt="Serene Walkway Landscape Detail" class="hover-img">
+    </div>
+    <div class="artwork-info">
+      <h3 class="artwork-title">Serene Walkway Landscape</h3>
+      <div class="artwork-price">
+        <span class="current-price">Rs. 2,349.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Position 3: Graceful Bird -->
+  <div class="artwork-item card-3" data-category="color" onclick="openProduct('horse-guards')">
+    <div class="artwork-image">
+      <img src="assets/canvas/7.jpeg" alt="Graceful Bird" class="main-img">
+      <img src="assets/canvas/d.jpeg" alt="Graceful Bird Detail" class="hover-img">
+    </div>
+    <div class="artwork-info">
+      <h3 class="artwork-title">Graceful Bird</h3>
+      <div class="artwork-price">
+        <span class="current-price">Rs. 2,349.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Position 4: Divine Krishna -->
+  <div class="artwork-item card-4" data-category="all canvas" onclick="openProduct('thames-sunset')">
+    <div class="artwork-image">
+      <img src="assets/canvas/6.jpeg" alt="Divine Krishna" class="main-img">
+      <img src="assets/canvas/e.jpeg" alt="Divine Krishna Detail" class="hover-img">
+    </div>
+    <div class="artwork-info">
+      <h3 class="artwork-title">Divine Krishna</h3>
+      <div class="artwork-price">
+        <span class="current-price">Rs. 2,199.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Position 5: Charming House (not in All section) -->
+  <div class="artwork-item card-5" data-category="color" onclick="openProduct('covent-garden')">
+    <div class="artwork-image">
+      <img src="assets//color paint/5.jpeg" alt="Charming House" class="main-img">
+      <img src="assets/color paint/c.jpeg" alt="Charming House Detail" class="hover-img">
+    </div>
+    <div class="artwork-info">
+      <h3 class="artwork-title">Charming House</h3>
+      <div class="artwork-price">
+        <span class="current-price">Rs. 2,549.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Position 6: Majestic Peacock -->
+  <div class="artwork-item card-6" data-category="all canvas" onclick="openProduct('london-bridge')">
+    <div class="artwork-image">
+      <img src="assets/canvas/paint1.jpeg" alt="Majestic Peacock" class="main-img">
+      <img src="assets/canvas/g.jpeg" alt="Majestic Peacock Detail" class="hover-img">
+    </div>
+    <div class="artwork-info">
+      <h3 class="artwork-title">Majestic Peacock</h3>
+      <div class="artwork-price">
+        <span class="current-price">Rs. 2,799.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Position 7: Beautiful Girl (not in All section) -->
+  <div class="artwork-item card-7" data-category="sketches" onclick="openProduct('big-ben')">
+    <div class="artwork-image">
+      <img src="assets/sketch/8.jpeg" alt="Beautiful Girl" class="main-img">
+      <img src="assets/sketch/f.jpeg" alt="Beautiful Girl Detail" class="hover-img">
+    </div>
+    <div class="artwork-info">
+      <h3 class="artwork-title">Beautiful Girl</h3>
+      <div class="artwork-price">
+        <span class="current-price">Rs. 2,999.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sketch 1 -->
+  <div class="artwork-item card-8" data-category="sketches" onclick="openProduct('sketch1')">
+    <div class="artwork-image">
+      <img src="assets/sketch/sketch1.jpeg" alt="Divine Ganesha Portrait" class="main-img">
+      <img src="assets/sketch/ganesh.jpeg" alt="Divine Ganesha Portrait Detail" class="hover-img">
+    </div>
+    <div class="artwork-info">
+      <h3 class="artwork-title">Divine Ganesha Portrait</h3>
+      <div class="artwork-price">
+        <span class="current-price">Rs. 1,999.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sketch 2 -->
+  <div class="artwork-item card-9" data-category="sketches" onclick="openProduct('sketch2')">
+    <div class="artwork-image">
+      <img src="assets/sketch/sketch 2.jpeg" alt="Mystical Liquid Drip" class="main-img">
+      <img src="assets/sketch/girl3.jpeg" alt="Mystical Liquid Drip Detail" class="hover-img">
+    </div>
+    <div class="artwork-info">
+      <h3 class="artwork-title">Mystical Liquid Drip</h3>
+      <div class="artwork-price">
+        <span class="current-price">Rs. 1,899.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sketch 3 -->
+  <div class="artwork-item card-10" data-category="sketches" onclick="openProduct('sketch3')">
+    <div class="artwork-image">
+      <img src="assets/sketch/sketch3.jpeg" alt="Serene Young Girl" class="main-img">
+      <img src="assets/sketch/girl2.jpeg" alt="Serene Young Girl Detail" class="hover-img">
+    </div>
+    <div class="artwork-info">
+      <h3 class="artwork-title">Serene Young Girl</h3>
+      <div class="artwork-price">
+        <span class="current-price">Rs. 2,199.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sketch 4 -->
+  <div class="artwork-item card-11" data-category="sketches" onclick="openProduct('sketch4')">
+    <div class="artwork-image">
+      <img src="assets/sketch/sketch4.jpeg" alt="Elegant Traditional Woman" class="main-img">
+      <img src="assets/sketch/girl.jpeg" alt="Elegant Traditional Woman Detail" class="hover-img">
+    </div>
+    <div class="artwork-info">
+      <h3 class="artwork-title">Elegant Traditional Woman</h3>
+      <div class="artwork-price">
+        <span class="current-price">Rs. 2,099.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sketch 5 -->
+  <div class="artwork-item card-12" data-category="sketches" onclick="openProduct('sketch5')">
+    <div class="artwork-image">
+      <img src="assets/sketch/sketch5.jpeg" alt="Majestic Tiger Portrait" class="main-img">
+      <img src="assets/sketch/sher.jpeg" alt="Majestic Tiger Portrait Detail" class="hover-img">
+    </div>
+    <div class="artwork-info">
+      <h3 class="artwork-title">Majestic Tiger Portrait</h3>
+      <div class="artwork-price">
+        <span class="current-price">Rs. 1,799.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Color Paint 1 -->
+  <div class="artwork-item card-13" data-category="color" onclick="openProduct('color1')">
+    <div class="artwork-image">
+      <img src="assets/color paint/yo.png" alt="Serene Mountain River" class="main-img">
+      <img src="assets/color paint/yo6.jpeg" alt="Serene Mountain River Detail" class="hover-img">
+    </div>
+    <div class="artwork-info">
+      <h3 class="artwork-title">Serene Mountain River</h3>
+      <div class="artwork-price">
+        <span class="current-price">Rs. 2,499.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Color Paint 2 -->
+  <div class="artwork-item card-14" data-category="color" onclick="openProduct('color2')">
+    <div class="artwork-image">
+      <img src="assets/color paint/yo2.png" alt="Ancient Stone Pavilion" class="main-img">
+      <img src="assets/color paint/yo5.jpeg" alt="Ancient Stone Pavilion Detail" class="hover-img">
+    </div>
+    <div class="artwork-info">
+      <h3 class="artwork-title">Ancient Stone Pavilion</h3>
+      <div class="artwork-price">
+        <span class="current-price">Rs. 2,399.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Color Paint 3 -->
+  <div class="artwork-item card-15" data-category="color" onclick="openProduct('color3')">
+    <div class="artwork-image">
+      <img src="assets/color paint/yo3.png" alt="Divine Shiva and Parvati" class="main-img">
+      <img src="assets/color paint/yo4.jpeg" alt="Divine Shiva and Parvati Detail" class="hover-img">
+    </div>
+    <div class="artwork-info">
+      <h3 class="artwork-title">Divine Shiva and Parvati</h3>
+      <div class="artwork-price">
+        <span class="current-price">Rs. 2,299.00</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <footer class="footer" id="about">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About Chitralaya</h3>
+        <p>Welcome to Chitralaya — where colors speak. We showcase the original artworks created by my mother, each piece crafted with love and creativity. All artworks displayed here are available for purchase directly through our site.</p>
+      </div>
+      
+      <div class="footer-section" id="contact">
+        <h3>Contact Us</h3>
+        <p>Get in touch with us for any inquiries about our artwork collection.</p>
+        <div class="social-links">
+          <a href="mailto:mannu131376@gmail.com?subject=Inquiry from Chitralaya Website&body=Hello, I am interested in your artwork collection. Please contact me with more information." class="social-link">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            <span>Email</span>
+          </a>
+          <a href="https://instagram.com/pratishtha0605" class="social-link">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+            <span>Instagram</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Chitralaya. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Ensure cart counter is updated when main page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      // Update cart counter
+      function updateCartCounter() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const cartCountElement = document.getElementById('cart-count');
+        if (cartCountElement) {
+          cartCountElement.textContent = totalItems;
+          cartCountElement.style.display = totalItems > 0 ? 'flex' : 'none';
+        }
+      }
+      
+      // Update on page load
+      updateCartCounter();
+      
+      // Listen for cart changes
+      window.addEventListener('storage', function(e) {
+        if (e.key === 'cart') {
+          updateCartCounter();
+        }
+      });
+      
+      // Listen for custom cart update events
+      window.addEventListener('cartUpdated', function() {
+        updateCartCounter();
+      });
+    });
+  </script>
+     
+  </body>
+</html>

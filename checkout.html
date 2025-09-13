@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Chitralaya</title>
+    <link rel="stylesheet" href="chitra.css" />
+    <script src="script.js"></script>
+</head>
+
+<body>
+    <div class="header-container">
+        <div class="navbar">
+            <div class="logo">
+                <span>चित्रालय|</span><span class="en">Chitralaya</span
+                ><span class="icon">🎨</span>
+            </div>
+
+            <div class="nav-links">
+                <a href="main.html#home">Home</a>
+                <a href="main.html#gallery">Gallery</a>
+                <a href="main.html#about">About</a>
+                <a href="main.html#contact">Contact</a>
+            </div>
+        </div>
+
+        <!-- User Actions -->
+        <div class="user-actions">
+            <a href="profile.html" class="user-action-btn" id="user-link">
+                <img src="assets/user.png" alt="Profile" class="icon-img">
+                <span id="user-text">Login</span>
+            </a>
+            <a href="cart.html" class="user-action-btn cart-btn">
+                <img src="assets/shopping-cart.png" alt="Cart" class="icon-img">
+                <span>Cart</span>
+                <span class="cart-count" id="cart-count">0</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="main.html">Home</a> › <a href="main.html#gallery">Gallery</a> › <a href="cart.html">Cart</a> › <span>Checkout</span>
+    </div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="checkout-container">
+                <div class="checkout-header">
+                    <h1>Checkout</h1>
+                    <p>Complete your order for these beautiful artworks</p>
+                </div>
+
+                <!-- Login Check Message -->
+                <div id="login-required" class="login-required" style="display: none;">
+                    <div class="login-message">
+                        <h2>🔒 Login Required</h2>
+                        <p>Please log in to proceed with your order.</p>
+                        <a href="login.html" class="btn-primary">Go to Login</a>
+                    </div>
+                </div>
+
+                <!-- Empty Cart Message -->
+                <div id="empty-cart-checkout" class="empty-cart-checkout" style="display: none;">
+                    <div class="empty-cart-message">
+                        <h2>🛒 Your cart is empty</h2>
+                        <p>Add some beautiful artworks to your cart before checkout.</p>
+                        <a href="main.html#gallery" class="btn-primary">Browse Gallery</a>
+                    </div>
+                </div>
+
+                <!-- Checkout Content -->
+                <div id="checkout-content" class="checkout-content" style="display: none;">
+                    <div class="checkout-grid">
+                        <!-- Order Summary -->
+                        <div class="order-summary">
+                            <h3>Order Summary</h3>
+                            <div class="order-items" id="order-items">
+                                <!-- Order items will be populated here -->
+                            </div>
+                            <div class="order-totals">
+                                <div class="total-row">
+                                    <span>Subtotal:</span>
+                                    <span id="checkout-subtotal">Rs. 0.00</span>
+                                </div>
+                                <div class="total-row">
+                                    <span>Shipping:</span>
+                                    <span>Free</span>
+                                </div>
+                                <div class="total-row final-total">
+                                    <span>Total:</span>
+                                    <span id="checkout-total">Rs. 0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact & Shipping Form -->
+                        <div class="checkout-form">
+                            <h3>Contact & Shipping Information</h3>
+                            <form id="checkout-form">
+                                <div class="form-group">
+                                    <label for="phone">Phone Number *</label>
+                                    <input type="tel" id="phone" name="phone" required value="+91">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="address1">Address Line 1 *</label>
+                                    <input type="text" id="address1" name="address1" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="address2">Address Line 2 (Optional)</label>
+                                    <input type="text" id="address2" name="address2">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="city">City *</label>
+                                    <input type="text" id="city" name="city" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="country">Country *</label>
+                                    <select id="country" name="country" required>
+                                        <option value="India">India</option>
+                                        
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="zipcode">ZIP/Postcode *</label>
+                                    <input type="text" id="zipcode" name="zipcode" required onblur="autoFillCityCountry()">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="notes">Order Notes (Optional)</label>
+                                    <input type="text" id="notes" name="notes" placeholder="Write any Customization Request">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="payment">Payment Method *</label>
+                                    <select id="payment" name="payment" required>
+                                        <option value="upi">UPI</option>
+                                        <option value="card" disabled>Card (Currently Unavailable)</option>
+                                    </select>
+                                </div>
+
+                                <div class="checkout-actions">
+                                    <a href="cart.html" class="btn-secondary">Back to Cart</a>
+                                    <button type="submit" class="btn-primary">Place Order</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer" id="about">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Chitralaya</h3>
+                <p>Welcome to Chitralaya — where colors speak. We showcase the original artworks created by my mother, each piece crafted with love and creativity. All artworks displayed here are available for purchase directly through our site.</p>
+            </div>
+            
+            <div class="footer-section" id="contact">
+                <h3>Contact Us</h3>
+                <p>Get in touch with us for any inquiries about our artwork collection.</p>
+                <div class="social-links">
+                    <a href="mailto:mannu131376@gmail.com?subject=Inquiry from Chitralaya Website&body=Hello, I am interested in your artwork collection. Please contact me with more information." class="social-link">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                        </svg>
+                        <span>Email</span>
+                    </a>
+                    <a href="https://instagram.com/pratishtha0605" class="social-link">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                        <span>Instagram</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Chitralaya. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Checkout page specific JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginAndCart();
+            updateCartCounter();
+        });
+
+        // Update cart counter function
+        function updateCartCounter() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCountElements = document.querySelectorAll('.cart-count');
+            cartCountElements.forEach(element => {
+                element.textContent = totalItems;
+                element.style.display = totalItems > 0 ? 'flex' : 'none';
+            });
+        }
+
+        // Auto-fill city and country based on postal code
+        function autoFillCityCountry() {
+            const zipcode = document.getElementById('zipcode').value.trim();
+            const cityField = document.getElementById('city');
+            const countryField = document.getElementById('country');
+            
+            if (zipcode.length >= 6) {
+                // Indian postal codes (PIN codes)
+                if (/^[1-9][0-9]{5}$/.test(zipcode)) {
+                    // Set country to India
+                    countryField.value = 'India';
+                    
+                    // Auto-fill city based on postal code patterns
+                    const firstDigit = zipcode.charAt(0);
+                    let cityName = '';
+                    
+                    switch(firstDigit) {
+                        case '1': cityName = 'Delhi'; break;
+                        case '2': cityName = 'Mumbai'; break;
+                        case '3': cityName = 'Kolkata'; break;
+                        case '4': cityName = 'Chennai'; break;
+                        case '5': cityName = 'Hyderabad'; break;
+                        case '6': cityName = 'Bangalore'; break;
+                        case '7': cityName = 'Pune'; break;
+                        case '8': cityName = 'Ahmedabad'; break;
+                        case '9': cityName = 'Jaipur'; break;
+                        default: cityName = 'Other'; break;
+                    }
+                    
+                    cityField.value = cityName;
+                }
+            }
+        }
+
+        function checkLoginAndCart() {
+            const token = localStorage.getItem('authToken');
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            // Check if user is logged in
+            if (!token) {
+                document.getElementById('login-required').style.display = 'block';
+                return;
+            }
+            
+            // Check if cart is empty
+            if (cart.length === 0) {
+                document.getElementById('empty-cart-checkout').style.display = 'block';
+                return;
+            }
+            
+            // Show checkout content
+            document.getElementById('checkout-content').style.display = 'block';
+            loadOrderSummary(cart);
+        }
+
+        function loadOrderSummary(cart) {
+            const orderItemsContainer = document.getElementById('order-items');
+            let subtotal = 0;
+            
+            orderItemsContainer.innerHTML = '';
+            
+            cart.forEach(item => {
+                const itemTotal = parseFloat(item.price.replace(/,/g, '')) * item.quantity;
+                subtotal += itemTotal;
+                
+                const orderItem = document.createElement('div');
+                orderItem.className = 'order-item';
+                orderItem.innerHTML = `
+                    <div class="order-item-image">
+                        <img src="${item.image}" alt="${item.title}">
+                    </div>
+                    <div class="order-item-details">
+                        <h4>${item.title}</h4>
+                        <p>Quantity: ${item.quantity}</p>
+                        <p class="order-item-price">Rs. ${itemTotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}</p>
+                    </div>
+                `;
+                orderItemsContainer.appendChild(orderItem);
+            });
+            
+            // Update totals
+            document.getElementById('checkout-subtotal').textContent = `Rs. ${subtotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+            document.getElementById('checkout-total').textContent = `Rs. ${subtotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+        }
+
+        // Handle form submission
+        document.getElementById('checkout-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const orderData = {
+                phone: formData.get('phone'),
+                address: formData.get('address'),
+                notes: formData.get('notes'),
+                items: JSON.parse(localStorage.getItem('cart')) || [],
+                total: document.getElementById('checkout-total').textContent
+            };
+            
+            // For now, just show success message
+            alert('Order placed successfully! We will contact you soon to confirm the details and begin creating your custom artwork.');
+            
+            // Clear cart
+            localStorage.removeItem('cart');
+            
+            // Dispatch cart update event to update counters on other pages
+            window.dispatchEvent(new CustomEvent('cartUpdated'));
+            
+            // Redirect to home page
+            window.location.href = 'main.html';
+        });
+    </script>
+</body>
+</html>

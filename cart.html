@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Chitralaya</title>
+    <link rel="stylesheet" href="chitra.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            <span>चित्रालय|</span><span class="en">Chitralaya</span
+            ><span class="icon">🎨</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="main.html#home">Home</a>
+            <a href="main.html#gallery">Gallery</a>
+            <a href="main.html#about">About</a>
+            <a href="main.html#contact">Contact</a>
+        </div>
+    </div>
+
+
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb">
+        <a href="main.html">Home</a>
+        <span class="breadcrumb-separator">></span>
+        <a href="main.html#gallery">Gallery</a>
+        <span class="breadcrumb-separator">></span>
+        <span class="breadcrumb-current">Cart</span>
+    </div>
+
+    <main class="main-content">
+        <div class="container">
+
+            <!-- Empty Cart State -->
+            <div id="empty-cart" class="empty-cart" style="display: none;">
+                <div class="empty-cart-content">
+                    <div class="empty-cart-icon">🛒</div>
+                    <h2>Your cart is empty</h2>
+                    <p>Looks like you haven't added any artwork to your cart yet.</p>
+                    <a href="main.html" class="btn-primary">Browse Gallery</a>
+                </div>
+            </div>
+
+            <!-- Cart with Items -->
+            <div id="cart-items" class="cart-items" style="display: none;">
+                <div class="cart-list">
+                    <!-- Cart items will be dynamically added here -->
+                </div>
+                
+                <div class="cart-summary">
+                    <h3>Order Summary</h3>
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">Rs. 0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping:</span>
+                        <span>Free</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span id="total">Rs. 0.00</span>
+                    </div>
+                    <a href="checkout.html" class="btn-checkout">Proceed to Checkout</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer" id="about">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Chitralaya</h3>
+                <p>Welcome to Chitralaya — where colors speak. We showcase the original artworks created by my mother, each piece crafted with love and creativity. All artworks displayed here are available for purchase directly through our site.</p>
+            </div>
+            
+            <div class="footer-section" id="contact">
+                <h3>Contact Us</h3>
+                <p>Get in touch with us for any inquiries about our artwork collection.</p>
+                <div class="social-links">
+                    <a href="mailto:mannu131376@gmail.com?subject=Inquiry from Chitralaya Website&body=Hello, I am interested in your artwork collection. Please contact me with more information." class="social-link">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                        </svg>
+                        <span>Email</span>
+                    </a>
+                    <a href="https://instagram.com/pratishtha0605" class="social-link">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                        <span>Instagram</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Chitralaya. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Cart functionality
+        class Cart {
+            constructor() {
+                this.items = JSON.parse(localStorage.getItem('cart')) || [];
+                this.init();
+            }
+
+            init() {
+                this.renderCart();
+                this.updateCartDisplay();
+            }
+
+            addItem(product) {
+                const existingItem = this.items.find(item => item.id === product.id);
+                
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    this.items.push({
+                        id: product.id,
+                        title: product.title,
+                        price: product.price,
+                        image: product.image,
+                        quantity: 1
+                    });
+                }
+                
+                this.saveCart();
+                this.renderCart();
+                this.updateCartDisplay();
+            }
+
+            removeItem(productId) {
+                this.items = this.items.filter(item => item.id !== productId);
+                this.saveCart();
+                this.renderCart();
+                this.updateCartDisplay();
+            }
+
+            updateQuantity(productId, quantity) {
+                const item = this.items.find(item => item.id === productId);
+                if (item) {
+                    if (quantity <= 0) {
+                        this.removeItem(productId);
+                    } else {
+                        item.quantity = quantity;
+                        this.saveCart();
+                        this.renderCart();
+                        this.updateCartDisplay();
+                    }
+                }
+            }
+
+            saveCart() {
+                localStorage.setItem('cart', JSON.stringify(this.items));
+            }
+
+            renderCart() {
+                const cartList = document.querySelector('.cart-list');
+                const emptyCart = document.getElementById('empty-cart');
+                const cartItems = document.getElementById('cart-items');
+
+                if (this.items.length === 0) {
+                    emptyCart.style.display = 'block';
+                    cartItems.style.display = 'none';
+                    return;
+                }
+
+                emptyCart.style.display = 'none';
+                cartItems.style.display = 'block';
+
+                cartList.innerHTML = this.items.map(item => `
+                    <div class="cart-item" data-id="${item.id}">
+                        <div class="item-image">
+                            <img src="${item.image}" alt="${item.title}">
+                        </div>
+                        <div class="item-details">
+                            <h3 class="item-title">${item.title}</h3>
+                            <div class="item-price">Rs. ${item.price}</div>
+                        </div>
+                        <div class="item-quantity">
+                            <button class="qty-btn" onclick="cart.updateQuantity('${item.id}', ${item.quantity - 1})">-</button>
+                            <span class="qty-value">${item.quantity}</span>
+                            <button class="qty-btn" onclick="cart.updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
+                        </div>
+                        <div class="item-total">
+                            Rs. ${(parseFloat(item.price.replace(/,/g, '')) * item.quantity).toLocaleString('en-IN', {minimumFractionDigits: 2})}
+                        </div>
+                        <button class="remove-btn" onclick="cart.removeItem('${item.id}')">×</button>
+                    </div>
+                `).join('');
+            }
+
+            updateCartDisplay() {
+                const subtotal = this.items.reduce((sum, item) => {
+                    return sum + (parseFloat(item.price.replace(/,/g, '')) * item.quantity);
+                }, 0);
+
+                document.getElementById('subtotal').textContent = `Rs. ${subtotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+                document.getElementById('total').textContent = `Rs. ${subtotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+            }
+
+            clearCart() {
+                this.items = [];
+                this.saveCart();
+                this.renderCart();
+                this.updateCartDisplay();
+            }
+        }
+
+        // Initialize cart
+        const cart = new Cart();
+
+
+        // Listen for add to cart events from other pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'cart') {
+                cart.items = JSON.parse(e.newValue) || [];
+                cart.renderCart();
+                cart.updateCartDisplay();
+            }
+        });
+    </script>
+</body>
+</html>
