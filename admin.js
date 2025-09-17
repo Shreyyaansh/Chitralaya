@@ -137,13 +137,13 @@ async function loadDashboard() {
     try {
         const token = localStorage.getItem('authToken');
         const [productsRes, ordersRes, usersRes] = await Promise.all([
-            fetch(`${API_BASE_URL}/admin/products`, {
+            fetch(`${window.API_BASE_URL}/admin/products`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             }),
-            fetch(`${API_BASE_URL}/admin/orders`, {
+            fetch(`${window.API_BASE_URL}/admin/orders`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             }),
-            fetch(`${API_BASE_URL}/admin/users`, {
+            fetch(`${window.API_BASE_URL}/admin/users`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             })
         ]);
@@ -205,7 +205,7 @@ function loadRecentOrders(orders) {
 async function loadProducts() {
     try {
         const token = localStorage.getItem('authToken');
-        const response = await fetch(`${API_BASE_URL}/admin/products`, {
+        const response = await fetch(`${window.API_BASE_URL}/admin/products`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();
@@ -304,7 +304,7 @@ async function handleAddProduct(e) {
     });
 
     try {
-        const response = await fetch(`${API_BASE_URL}/admin/products`, {
+        const response = await fetch(`${window.API_BASE_URL}/admin/products`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -333,7 +333,7 @@ async function deleteProduct(productId) {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/admin/products/${productId}`, {
+        const response = await fetch(`${window.API_BASE_URL}/admin/products/${productId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -358,7 +358,7 @@ async function deleteProduct(productId) {
 async function loadOrders() {
     try {
         const token = localStorage.getItem('authToken');
-        const response = await fetch(`${API_BASE_URL}/admin/orders`, {
+        const response = await fetch(`${window.API_BASE_URL}/admin/orders`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();
@@ -437,7 +437,7 @@ function filterOrders() {
 
 async function updateOrderStatus(orderId, newStatus) {
     try {
-        const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}`, {
+        const response = await fetch(`${window.API_BASE_URL}/admin/orders/${orderId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -462,7 +462,7 @@ async function updateOrderStatus(orderId, newStatus) {
 
 async function viewOrderDetails(orderId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}`, {
+        const response = await fetch(`${window.API_BASE_URL}/admin/orders/${orderId}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
             }
@@ -693,7 +693,7 @@ function setupImagePreviews() {
 async function loadUsers() {
     try {
         const token = localStorage.getItem('authToken');
-        const response = await fetch(`${API_BASE_URL}/admin/users`, {
+        const response = await fetch(`${window.API_BASE_URL}/admin/users`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();
@@ -756,7 +756,7 @@ function displayUsers(users) {
 
 async function toggleUserStatus(userId, currentStatus) {
     try {
-        const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
+        const response = await fetch(`${window.API_BASE_URL}/admin/users/${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -897,7 +897,7 @@ async function handleEditProduct(e) {
     };
 
     try {
-        const response = await fetch(`${API_BASE_URL}/admin/products/${productId}`, {
+        const response = await fetch(`${window.API_BASE_URL}/admin/products/${productId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

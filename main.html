@@ -142,7 +142,7 @@
     // Load products from API
     async function loadProducts() {
       try {
-        const response = await fetch(`${API_BASE_URL}/products`);
+        const response = await fetch(`${window.API_BASE_URL}/products`);
         const data = await response.json();
         
         if (data.success) {
