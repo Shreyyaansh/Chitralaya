@@ -141,7 +141,12 @@
         const userLink = document.getElementById('user-link');
         const userText = document.getElementById('user-text');
         
-        console.log('Checking user status...', { token: token ? 'exists' : 'missing', apiUrl: window.API_BASE_URL });
+        console.log('Checking user status...', { 
+          token: token ? 'exists' : 'missing', 
+          apiUrl: window.API_BASE_URL,
+          currentPage: window.location.pathname,
+          timestamp: new Date().toISOString()
+        });
         
         if (token) {
           try {
@@ -297,7 +302,6 @@
     window.addEventListener('cartUpdated', function() {
       updateCartCounter();
     });
-  }
 
   // Lazy loading for images
   function initLazyLoading() {
@@ -374,5 +378,6 @@
     // In production, you might want to send this to an error reporting service
   });
 
-  }); // Close the main window.onload function
- 
+// Close the main window.onload function
+
+// End of script

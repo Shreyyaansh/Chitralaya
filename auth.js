@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/auth/register`, {
+            const response = await fetch(`${window.API_BASE_URL}/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -145,7 +145,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            console.log('Login - API_BASE_URL:', window.API_BASE_URL);
+            console.log('Login - Making request to:', `${window.API_BASE_URL}/auth/login`);
+            const response = await fetch(`${window.API_BASE_URL}/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -319,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function verifyTokenAndRedirect() {
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+            const response = await fetch(`${window.API_BASE_URL}/auth/profile`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
