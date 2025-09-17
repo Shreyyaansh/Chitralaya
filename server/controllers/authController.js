@@ -115,10 +115,14 @@ const login = async (req, res) => {
 
     // Generate token
     const token = generateToken(user._id);
+    console.log('Login - Generated token:', token.substring(0, 20) + '...');
+    console.log('Login - JWT_SECRET exists:', !!process.env.JWT_SECRET);
 
     // Update last login
     user.lastLogin = new Date();
     await user.save();
+
+    console.log('Login - User profile:', user.getPublicProfile());
 
     res.json({
       success: true,
