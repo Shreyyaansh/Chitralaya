@@ -181,7 +181,7 @@
                         </div>
                         <div class="item-details">
                             <h3 class="item-title">${item.title}</h3>
-                            <div class="item-price">Rs. ${item.price}</div>
+                            <div class="item-price">Rs. ${item.priceFormatted || item.price}</div>
                         </div>
                         <div class="item-quantity">
                             <button class="qty-btn" onclick="cart.updateQuantity('${item.id}', ${item.quantity - 1})">-</button>
@@ -189,7 +189,7 @@
                             <button class="qty-btn" onclick="cart.updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
                         </div>
                         <div class="item-total">
-                            Rs. ${(parseFloat(item.price.replace(/,/g, '')) * item.quantity).toLocaleString('en-IN', {minimumFractionDigits: 2})}
+                            Rs. ${(item.price * item.quantity).toLocaleString('en-IN', {minimumFractionDigits: 2})}
                         </div>
                         <button class="remove-btn" onclick="cart.removeItem('${item.id}')">×</button>
                     </div>
@@ -198,7 +198,7 @@
 
             updateCartDisplay() {
                 const subtotal = this.items.reduce((sum, item) => {
-                    return sum + (parseFloat(item.price.replace(/,/g, '')) * item.quantity);
+                    return sum + (item.price * item.quantity);
                 }, 0);
 
                 document.getElementById('subtotal').textContent = `Rs. ${subtotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;

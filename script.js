@@ -124,7 +124,6 @@
         const emailButton = document.querySelector('a[href^="mailto:"]');
         if (emailButton) {
           emailButton.addEventListener('click', function(e) {
-            console.log('Email button clicked - opening email client...');
             // The mailto link will handle opening the email client
           });
         }

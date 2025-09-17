@@ -4,7 +4,13 @@ h1 {
 }
 .banner {
   height: 40vh;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: linear-gradient(135deg, 
+    rgba(255, 107, 107, 0.25) 0%, 
+    rgba(78, 205, 196, 0.25) 20%,
+    rgba(69, 183, 209, 0.25) 40%,
+    rgba(254, 202, 87, 0.25) 60%,
+    rgba(150, 206, 180, 0.25) 80%,
+    rgba(255, 0, 255, 0.25) 100%);
   background-size: cover;
   background-position: center;
   display: flex;
@@ -15,6 +21,8 @@ h1 {
   padding: 3rem 2rem;
   margin-top: 30px;
   overflow: hidden;
+  cursor: auto;
+  transition: background 0.3s ease;
 }
 
 .banner::before {
@@ -32,21 +40,6 @@ h1 {
 .banner > * {
   position: relative;
   z-index: 2;
-}
-
-/* Cursor trail effect */
-.banner {
-  cursor: auto;
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, 
-    rgba(255, 107, 107, 0.25) 0%, 
-    rgba(78, 205, 196, 0.25) 20%,
-    rgba(69, 183, 209, 0.25) 40%,
-    rgba(254, 202, 87, 0.25) 60%,
-    rgba(150, 206, 180, 0.25) 80%,
-    rgba(255, 0, 255, 0.25) 100%);
-  transition: background 0.3s ease;
 }
 
 #spotlight {
@@ -67,15 +60,11 @@ h1 {
       
       /* Prevent automatic scrolling on page load */
       body {
-        scroll-behavior: auto;
-      }
-      body {
         margin: 0;
         padding-top: 70px;
-        margin: 0;
         font-family: "Playfair Display", serif;
         background-color: #ffffff;
-        
+        scroll-behavior: auto;
       }
       /* Offset anchored sections to account for fixed navbar */
       #home, #gallery, #about, #contact { scroll-margin-top: 80px; }
@@ -208,6 +197,7 @@ h1 {
       .nav-links a:hover {
         color: #d35400;
       }
+
       .heading {
         text-align: center;
         margin-top: 0rem;
@@ -420,7 +410,9 @@ h1 {
         transform: scale(1.02);
       }
 
-      .artwork-image img {
+      .artwork-image img,
+      .artwork-image .main-img,
+      .artwork-image .hover-img {
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -429,6 +421,13 @@ h1 {
         border-radius: 0;
         display: block;
       }
+
+      /* Individual Card Positioning - Target by product name */
+      .artwork-item[data-product-name="Divine Ganesha Portrait"] .artwork-image .main-img,
+      .artwork-item[data-product-name="Divine Ganesha Portrait"] .artwork-image .hover-img {
+        object-position: center -80px;
+      }
+
 
       /* Override for hover images */
       .artwork-image .hover-img {
@@ -1059,61 +1058,10 @@ h1 {
       }
 
       /* Artwork Item Filtering */
-      .artwork-item {
-        transition: all 0.3s ease;
-      }
-
       .artwork-item.hidden {
         display: none;
       }
 
-
-      /* Individual Image Position Classes for Each Card */
-      .artwork-item.card-1 .artwork-image img { /* Divine Vishnu and Lakshmi */
-        /* object-position: center 20px; */
-      }
-      .artwork-item.card-2 .artwork-image img { /* Serene Walkway Landscape */
-        /* object-position: center 20px; */
-      }
-      .artwork-item.card-3 .artwork-image img { /* Graceful Bird */
-        /* object-position: center 20px; */
-      }
-      .artwork-item.card-4 .artwork-image img { /* Divine Krishna */
-        /* object-position: center 20px; */
-      }
-      .artwork-item.card-5 .artwork-image img { /* Charming House */
-        /* object-position: center 20px; */
-      }
-      .artwork-item.card-6 .artwork-image img { /* Majestic Peacock */
-        /* object-position: center 20px; */
-      }
-      .artwork-item.card-7 .artwork-image img { /* Beautiful Girl */
-        /* object-position: center 20px; */
-      }
-      .artwork-item.card-8 .artwork-image img { /* Sketch 1 */
-        /* object-position: center 20px; */
-      }
-      .artwork-item.card-9 .artwork-image img { /* Sketch 2 */
-        object-position: center -50px;
-      }
-      .artwork-item.card-10 .artwork-image img { /* Sketch 3 */
-        object-position: center -50px;
-      }
-      .artwork-item.card-11 .artwork-image img { /* Sketch 4 */
-        object-position: center -50px;
-      }
-      .artwork-item.card-12 .artwork-image img { /* Sketch 5 */
-        object-position: center -50px;
-      }
-      .artwork-item.card-13 .artwork-image img { /* Color Paint 1 */
-        /* object-position: center 20px; */
-      }
-      .artwork-item.card-14 .artwork-image img { /* Color Paint 2 */
-        object-position: center -50px;
-      }
-      .artwork-item.card-15 .artwork-image img { /* Color Paint 3 */
-        object-position: center -50px;
-      }
 
       /* Profile Page Styles */
       .profile-container {
@@ -1207,29 +1155,11 @@ h1 {
         max-width: 300px;
       }
 
-      .btn-secondary {
-        background: #d35400;
-        color: white;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-block;
-        text-align: center;
-      }
-
-      .btn-secondary:hover {
-        background: #b8460a;
-        transform: translateY(-2px);
-      }
 
       .btn-danger {
         background: #d35400;
         color: white;
-        padding: 12px 24px;
+        padding: 14px 30px;
         border: none;
         border-radius: 8px;
         cursor: pointer;
@@ -1355,9 +1285,10 @@ h1 {
       }
 
       .order-item-image img {
-        width: 100%;
-        height: 100%;
+        width: 60px;
+        height: 60px;
         object-fit: cover;
+        border-radius: 6px;
       }
 
       .order-item-details h4 {
@@ -1827,7 +1758,7 @@ h1 {
 
       }
 
-
+      @media (max-width: 768px) {
         .cart-items {
           grid-template-columns: 1fr;
           gap: 30px;
@@ -1926,4 +1857,598 @@ h1 {
         .breadcrumb {
           padding: 15px 20px;
         }
-      /* } */
+      }
+
+      /* Order History Styles */
+      .order-history-section {
+        padding: 40px 0;
+        background: #f8f9fa;
+      }
+
+      .orders-container {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .order-card {
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: box-shadow 0.3s ease;
+        margin-bottom: 30px;
+      }
+      .ordered-list {
+        margin: 10px 0 20px;
+        padding-left: 20px;
+        color: #333;
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+      .ordered-list li {
+        margin-bottom: 6px;
+      }
+      
+      .order-card:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Fix preview image size - removed conflicting rule */
+
+    /* Make sure details are to the right */
+    .order-info {
+      flex: 1 !important;
+      min-width: 0;
+    }
+
+    .order-subtotal {
+      margin-left: auto;
+      font-weight: 600;
+      color: #d35400;
+      font-size: 0.9rem;
+    }
+
+      .additional-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #d35400;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: bold;
+        border: 2px solid white;
+        z-index: 10;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+
+      .order-info h3 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.2rem;
+        color: #2c3e50;
+        margin: 0 0 8px 0;
+      }
+
+      .title-badge {
+        background: #d35400;
+        color: white;
+        border-radius: 12px;
+        padding: 2px 8px;
+        font-size: 0.6rem;
+        font-weight: bold;
+        white-space: nowrap;
+      }
+
+      .order-preview {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 15px;
+        gap: 15px;
+      }
+
+      .order-preview .order-image img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid #e9ecef;
+      }
+
+      .order-image {
+        flex-shrink: 0;
+        order: 1;
+      }
+
+      .order-info {
+        flex: 1;
+        order: 2;
+        min-width: 0;
+      }
+
+      .order-subtotal {
+        flex-shrink: 0;
+        order: 3;
+        margin-left: auto;
+        font-weight: 600;
+        color: #d35400;
+        font-size: 0.9rem;
+      }
+
+      .order-actions {
+        flex-shrink: 0;
+        order: 4;
+      }
+
+      .order-right-section {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
+        flex-shrink: 0;
+        order: 4;
+      }
+
+      .order-status {
+        padding: 8px 12px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border-left: 4px solid #6c757d;
+        margin: 0;
+        width: 250px;
+        text-align: left;
+        white-space: nowrap;
+      }
+
+      .payment-status {
+        padding: 8px 12px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border-left: 4px solid #6c757d;
+        margin: 0;
+        width: 250px;
+        text-align: left;
+        white-space: nowrap;
+      }
+
+      .status-label {
+        font-weight: 600;
+        color: #495057;
+        margin-right: 8px;
+      }
+
+      .status-value {
+        font-weight: 500;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
+
+      .order-status .status-value {
+        margin-left: 18px;
+      }
+
+      .status-pending {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+      }
+
+      .status-confirmed {
+        background: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+      }
+
+      .status-shipped {
+        background: #cce5ff;
+        color: #004085;
+        border: 1px solid #b3d7ff;
+      }
+
+      .status-delivered {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .status-cancelled {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      /* Payment Status Styles */
+      .payment-pending {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+      }
+
+      .payment-completed {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .payment-failed {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .payment-refunded {
+        background: #e2e3e5;
+        color: #383d41;
+        border: 1px solid #d6d8db;
+      }
+
+
+      .order-subtotal {
+        font-weight: 600;
+        color: #d35400;
+        font-size: 0.9rem;
+        margin-left: auto;
+      }
+
+      .order-info {
+        flex: 1 !important;
+        min-width: 0;
+        flex-grow: 1 !important;
+        flex-shrink: 1 !important;
+      }
+
+      .order-info h3 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.2rem;
+        color: #2c3e50;
+        margin: 0 0 8px 0;
+      }
+
+      .order-info p {
+        margin: 4px 0;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .order-total {
+        font-weight: 600;
+        color: #d35400 !important;
+      }
+
+      .order-actions {
+        flex-shrink: 0;
+      }
+
+      .order-details {
+        border-top: 1px solid #e9ecef;
+        padding: 20px 20px 25px 20px;
+        background: #f8f9fa;
+      }
+
+      .order-items-list h4 {
+        font-family: 'Playfair Display', serif;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+      }
+
+      .order-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #e9ecef;
+      }
+
+      .order-item-image img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 6px;
+      }
+
+      .order-item-details {
+        flex: 1;
+      }
+
+      .order-item-details h4 {
+        font-family: 'Playfair Display', serif;
+        color: #2c3e50;
+        margin: 0 0 5px 0;
+        font-size: 1rem;
+      }
+
+      .order-item-details p {
+        margin: 2px 0;
+        color: #666;
+        font-size: 0.85rem;
+      }
+
+      .order-item-subtotal {
+        font-weight: 600;
+        color: #d35400;
+        font-size: 0.9rem;
+      }
+
+      .order-shipping, .order-notes {
+        margin-top: 20px;
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+      }
+
+      .order-shipping h4, .order-notes h4 {
+        font-family: 'Playfair Display', serif;
+        color: #2c3e50;
+        margin: 0 0 10px 0;
+        font-size: 1rem;
+      }
+
+      .order-shipping p, .order-notes p {
+        margin: 5px 0;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .order-footer {
+        margin-top: 20px;
+        padding: 15px;
+        background: #2c3e50;
+        color: white;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .order-footer p {
+        margin: 0;
+        font-size: 0.9rem;
+      }
+
+      .loading-message, .empty-state, .error-message {
+        text-align: center;
+        padding: 40px;
+        color: #666;
+      }
+
+      .btn-secondary {
+        background: #d35400;
+        color: white;
+        border: none;
+        padding: 14px 30px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background 0.3s ease;
+      }
+
+      .btn-secondary:hover {
+        background: #b8460a;
+      }
+
+      .back-btn {
+        background: #d35400;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background 0.3s ease;
+        margin-bottom: 20px;
+      }
+
+      .back-btn:hover {
+        background: #b8460a;
+      }
+
+      /* Saved Addresses Styles */
+      .saved-addresses-section {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .saved-addresses-section h4 {
+        margin: 0 0 15px 0;
+        color: #2c3e50;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem;
+      }
+
+
+      .form-divider {
+        border: none;
+        border-top: 1px solid #dee2e6;
+        margin: 20px 0;
+      }
+
+      .saved-addresses-section select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        background: white;
+      }
+
+      .saved-addresses-section select:focus {
+        outline: none;
+        border-color: #d35400;
+        box-shadow: 0 0 0 2px rgba(211, 84, 0, 0.1);
+      }
+
+      /* Address Management Styles */
+      .addresses-container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .addresses-actions {
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .address-card {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      .address-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .address-header h4 {
+        margin: 0;
+        color: #2c3e50;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .default-badge {
+        background: #d35400;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: bold;
+      }
+
+      .address-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .address-actions button {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+      }
+
+      .address-details {
+        color: #6c757d;
+        line-height: 1.6;
+      }
+
+      .address-details p {
+        margin: 5px 0;
+      }
+
+      .address-details strong {
+        color: #2c3e50;
+      }
+
+      .address-form-container {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 25px;
+        margin-top: 20px;
+      }
+
+      .address-form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .address-form-header h3 {
+        margin: 0;
+        color: #2c3e50;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.3rem;
+      }
+
+      .address-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .address-form .form-group:first-child,
+      .address-form .form-group:nth-child(2),
+      .address-form .form-group:nth-child(3),
+      .address-form .form-group:nth-child(4),
+      .address-form .form-group:nth-child(5) {
+        grid-column: 1 / -1;
+      }
+
+      .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        color: #2c3e50;
+      }
+
+      .checkbox-label input[type="checkbox"] {
+        width: auto;
+        margin: 0;
+      }
+
+      .form-actions {
+        grid-column: 1 / -1;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .form-actions button {
+        min-width: 120px;
+      }
+
+      @media (max-width: 768px) {
+        .address-form {
+          grid-template-columns: 1fr;
+        }
+        
+        .address-form .form-group:first-child,
+        .address-form .form-group:nth-child(2),
+        .address-form .form-group:nth-child(3),
+        .address-form .form-group:nth-child(4),
+        .address-form .form-group:nth-child(5) {
+          grid-column: 1;
+        }
+
+        .address-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .address-actions {
+          width: 100%;
+          justify-content: flex-start;
+        }
+      }

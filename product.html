@@ -149,116 +149,25 @@
 
 
       function addToCart() {
-        const productId = new URLSearchParams(window.location.search).get('id');
-        const products = {
-          'hampstead-heath': {
-            id: 'hampstead-heath',
-            title: 'Radha Krishna',
-            price: '3,500.00',
-            image: 'assets/canvas/2.jpeg'
-          },
-          'borough-market': {
-            id: 'borough-market',
-            title: 'Serene Walkway Landscape',
-            price: '2,349.00',
-            image: 'assets/canvas/3.jpeg'
-          },
-          'horse-guards': {
-            id: 'horse-guards',
-            title: 'Graceful Bird',
-            price: '2,199.00',
-            image: 'assets/canvas/7.jpeg'
-          },
-          'thames-sunset': {
-            id: 'thames-sunset',
-            title: 'Divine Krishna',
-            price: '2,499.00',
-            image: 'assets/canvas/6.jpeg'
-          },
-          'covent-garden': {
-            id: 'covent-garden',
-            title: 'Charming House',
-            price: '2,299.00',
-            image: 'assets/canvas/5.jpeg'
-          },
-          'london-bridge': {
-            id: 'london-bridge',
-            title: 'Majestic Peacock',
-            price: '2,599.00',
-            image: 'assets/canvas/paint1.jpeg'
-          },
-          'big-ben': {
-            id: 'big-ben',
-            title: 'Beautiful Girl',
-            price: '2,999.00',
-            image: 'assets/sketch/8.jpeg'
-          },
-          'sketch1': {
-            id: 'sketch1',
-            title: 'Divine Ganesha Portrait',
-            price: '1,999.00',
-            image: 'assets/sketch/sketch1.jpeg'
-          },
-          'sketch2': {
-            id: 'sketch2',
-            title: 'Mystical Liquid Drip',
-            price: '1,899.00',
-            image: 'assets/sketch/sketch 2.jpeg'
-          },
-          'sketch3': {
-            id: 'sketch3',
-            title: 'Serene Young Girl',
-            price: '2,199.00',
-            image: 'assets/sketch/sketch3.jpeg'
-          },
-          'sketch4': {
-            id: 'sketch4',
-            title: 'Elegant Traditional Woman',
-            price: '2,099.00',
-            image: 'assets/sketch/sketch4.jpeg'
-          },
-          'sketch5': {
-            id: 'sketch5',
-            title: 'Majestic Tiger Portrait',
-            price: '1,799.00',
-            image: 'assets/sketch/sketch5.jpeg'
-          },
-          'color1': {
-            id: 'color1',
-            title: 'Serene Mountain River',
-            price: '2,499.00',
-            image: 'assets/color paint/yo.png'
-          },
-          'color2': {
-            id: 'color2',
-            title: 'Ancient Stone Pavilion',
-            price: '2,399.00',
-            image: 'assets/color paint/yo2.png'
-          },
-          'color3': {
-            id: 'color3',
-            title: 'Divine Shiva and Parvati',
-            price: '2,299.00',
-            image: 'assets/color paint/yo3.png'
-          }
-        };
-
-        const product = products[productId];
-        if (product) {
+        // Use real product data if available, otherwise fallback to hardcoded
+        if (window.currentProduct) {
+          const product = window.currentProduct;
+          
           // Get existing cart or create new one
           let cart = JSON.parse(localStorage.getItem('cart')) || [];
           
           // Check if item already exists in cart
-          const existingItem = cart.find(item => item.id === productId);
+          const existingItem = cart.find(item => item.id === product._id);
           
           if (existingItem) {
             existingItem.quantity += 1;
           } else {
             cart.push({
-              id: product.id,
-              title: product.title,
-              price: product.price,
-              image: product.image,
+              id: product._id,
+              title: product.name,
+              price: product.price, // Store as number for calculations
+              priceFormatted: product.price.toLocaleString('en-IN', {minimumFractionDigits: 2}), // For display
+              image: product.images[0],
               quantity: 1
             });
           }
@@ -277,7 +186,12 @@
           
           // Trigger custom cart update event
           window.dispatchEvent(new CustomEvent('cartUpdated'));
+          
+          return;
         }
+        
+        // Show error if no product data is available
+        showToast('Product data not loaded. Please refresh the page.');
       }
 
       function buyNow() {
@@ -312,180 +226,60 @@
         }
       };
 
-      function loadProductData(productId) {
-        // This would typically fetch from a database
-        // For now, we'll use sample data
-        const products = {
-          'hampstead-heath': {
-            title: 'Radha Krishna',
-            price: '3,500.00',
-            originalPrice: '2,699.00',
-            image: 'assets/canvas/2.jpeg',
-            hoverImage: 'assets/canvas/b.jpeg',
-            description: 'A beautiful depiction of the divine love between Radha and Krishna, capturing the eternal bond and spiritual devotion that represents the highest form of love in Hindu mythology. This sacred artwork embodies the essence of divine romance and spiritual union.',
-            medium: 'Canvas',
-            size: '16 × 20 inch'
-          },
-          'borough-market': {
-            title: 'Serene Walkway Landscape',
-            price: '2,349.00',
-            originalPrice: '2,699.00',
-            image: 'assets/canvas/3.jpeg',
-            hoverImage: 'assets/canvas/a.jpeg',
-            description: 'Stroll through this peaceful walkway landscape, where the gentle path leads through serene natural beauty, creating a sense of tranquility and contemplation.',
-            medium: 'Canvas'
-          },
-          'horse-guards': {
-            title: 'Graceful Bird',
-            price: '2,349.00',
-            originalPrice: '2,699.00',
-            image: 'assets/canvas/7.jpeg',
-            hoverImage: 'assets/canvas/d.jpeg',
-            description: 'A graceful bird captured in this beautiful artwork, showcasing the elegance and beauty of nature through artistic expression.',
-            medium: 'A3 paper',
-            size: 'A3 size'
-          },
-          'thames-sunset': {
-            title: 'Divine Krishna',
-            price: '2,199.00',
-            originalPrice: '1,999.00',
-            image: 'assets/canvas/6.jpeg',
-            hoverImage: 'assets/canvas/e.jpeg',
-            description: 'Behold the divine presence of Lord Krishna in this sacred artwork, beautifully capturing the spiritual essence and divine grace.',
-            medium: 'Canvas'
-          },
-          'covent-garden': {
-            title: 'Charming House',
-            price: '2,549.00',
-            originalPrice: '2,299.00',
-            image: 'assets/color paint/5.jpeg',
-            hoverImage: 'assets/color paint/c.jpeg',
-            description: 'A charming house captured in this beautiful artwork, showcasing architectural beauty and artistic expression.',
-            medium: 'A3 paper',
-            size: 'A3 size'
-          },
-          'london-bridge': {
-            title: 'Majestic Peacock',
-            price: '2,799.00',
-            originalPrice: '2,499.00',
-            image: 'assets/canvas/paint1.jpeg',
-            hoverImage: 'assets/canvas/g.jpeg',
-            description: 'A majestic peacock displayed in all its glory, showcasing the beauty and elegance of this magnificent bird through artistic expression.',
-            medium: 'Canvas',
-            size: '30 × 20 inch'
-          },
-          'big-ben': {
-            title: 'Beautiful Girl',
-            price: '2,999.00',
-            originalPrice: '2,699.00',
-            image: 'assets/sketch/8.jpeg',
-            hoverImage: 'assets/sketch/f.jpeg',
-            description: 'A beautiful girl captured in this elegant artwork, showcasing grace and beauty through artistic expression.',
-            medium: 'Paper',
-            size: '12 × 11.5 inch'
-          },
-          'sketch1': {
-            title: 'Divine Ganesha Portrait',
-            price: '1,999.00',
-            originalPrice: '1,799.00',
-            image: 'assets/sketch/sketch1.jpeg',
-            hoverImage: 'assets/sketch/ganesh.jpeg',
-            description: 'A majestic charcoal sketch capturing the divine presence of Lord Ganesha. This detailed portrait highlights his iconic elephant head, adorned with an elaborate crown and intricate jewelry. The serene expression, gracefully curled trunk with its delicate leaf pattern, and the masterful shading against a dramatic dark background evoke a sense of peace and reverence.',
-            medium: 'A4 paper',
-            size: 'A4 size'
-          },
-          'sketch2': {
-            title: 'Mystical Liquid Drip',
-            price: '1,899.00',
-            originalPrice: '1,699.00',
-            image: 'assets/sketch/sketch 2.jpeg',
-            hoverImage: 'assets/sketch/girl3.jpeg',
-            description: 'An intriguing charcoal sketch featuring a woman with her eyes closed and a viscous liquid flowing down the center of her face. The detailed rendering of the liquid droplets and the serene expression create a sense of ritual or cleansing. The monochromatic palette and skillful shading give this artwork a mystical and contemplative quality.',
-            medium: 'A3 paper',
-            size: 'A3 size'
-          },
-          'sketch3': {
-            title: 'Serene Young Girl',
-            price: '2,199.00',
-            originalPrice: '1,999.00',
-            image: 'assets/sketch/sketch3.jpeg',
-            hoverImage: 'assets/sketch/girl2.jpeg',
-            description: 'A poignant charcoal portrait of a young girl with a thoughtful and slightly somber expression. Her long hair frames her face beautifully, and the artist has captured her contemplative mood with exquisite detail. The dark, atmospheric background creates a vignette effect that draws focus to her expressive eyes and gentle features.',
-            medium: 'A3 paper',
-            size: 'A3 size'
-          },
-          'sketch4': {
-            title: 'Elegant Traditional Woman',
-            price: '2,099.00',
-            originalPrice: '1,899.00',
-            image: 'assets/sketch/sketch4.jpeg',
-            hoverImage: 'assets/sketch/girl.jpeg',
-            description: 'A serene charcoal sketch of a woman with closed eyes, featuring a distinctive vertical design on her forehead. The artist has captured her peaceful expression with delicate shading and attention to detail, embodying grace and introspection in this contemplative portrait.',
-            medium: 'A3 paper',
-            size: 'A3 size'
-          },
-          'sketch5': {
-            title: 'Majestic Tiger Portrait',
-            price: '1,799.00',
-            originalPrice: '1,599.00',
-            image: 'assets/sketch/sketch5.jpeg',
-            hoverImage: 'assets/sketch/sher.jpeg',
-            description: 'A powerful and detailed charcoal sketch capturing the intense gaze and majestic presence of a tiger. The intricate stripes, textured fur, and deep shading bring this magnificent creature to life, highlighting its fierce beauty and commanding aura. The strong contrasts and realistic rendering showcase the artist\'s mastery of wildlife portraiture.',
-            medium: 'A3 paper',
-            size: 'A3 size'
-          },
-          'color1': {
-            title: 'Serene Mountain River',
-            price: '2,499.00',
-            originalPrice: '2,299.00',
-            image: 'assets/color paint/yo.png',
-            hoverImage: 'assets/color paint/yo6.jpeg',
-            description: 'A tranquil watercolor painting capturing the peaceful essence of an alpine landscape. Majestic snow-capped mountains rise in the background, overlooking a vibrant emerald green river dotted with large, earthy rocks. Lush green foliage frames the scene, creating a serene wilderness atmosphere that evokes the beauty of untouched nature.',
-            medium: 'A3 paper',
-            size: 'A3 size'
-          },
-          'color2': {
-            title: 'Ancient Stone Pavilion',
-            price: '2,399.00',
-            originalPrice: '2,199.00',
-            image: 'assets/color paint/yo2.png',
-            hoverImage: 'assets/color paint/yo5.jpeg',
-            description: 'An elegant watercolor painting featuring a traditional domed chhatri or gazebo in warm reddish-brown stone. The ornate pavilion with its tiered dome and arched openings stands majestically against a soft blue sky, surrounded by lush green foliage. This artwork beautifully captures the architectural heritage and natural harmony of traditional Indian structures.',
-            medium: 'A4 paper',
-            size: 'A4 size'
-          },
-          'color3': {
-            title: 'Divine Shiva and Parvati',
-            price: '2,299.00',
-            originalPrice: '2,099.00',
-            image: 'assets/color paint/yo3.png',
-            hoverImage: 'assets/color paint/yo4.jpeg',
-            description: 'A sacred watercolor painting depicting the divine couple Lord Shiva and Goddess Parvati in intimate embrace. Shiva\'s blue-skinned form with his third eye and meditative expression contrasts beautifully with Parvati\'s golden radiance and ornate jewelry. Surrounded by lush green foliage and featuring a Shiva Lingam, this artwork captures the spiritual essence of divine love and harmony.',
-            medium: 'A3 paper',
-            size: 'A3 size'
-          }
-        };
-
-        const product = products[productId];
-        if (product) {
-          document.getElementById('product-title').textContent = product.title;
-          document.querySelector('.current-price').textContent = `Rs. ${product.price}`;
-          document.getElementById('main-product-image').src = product.image;
-          document.querySelector('.product-description p').textContent = product.description;
-          document.getElementById('product-breadcrumb').textContent = product.title;
+      async function loadProductData(productId) {
+        try {
+          // Fetch product data from API
+          const response = await fetch(`http://localhost:3000/api/products/${productId}`);
+          const data = await response.json();
           
-          // Update size and medium information
-          if (product.size) {
-            document.getElementById('product-size').textContent = product.size;
+          if (data.success) {
+            const product = data.data.product;
+            displayProductData(product);
+          } else {
+            showProductError('Product not found');
           }
-          if (product.medium) {
-            document.getElementById('product-medium').textContent = product.medium;
-          }
-          
-          // Create thumbnail gallery dynamically
-          createThumbnailGallery(product);
+        } catch (error) {
+          console.error('Error loading product:', error);
+          showProductError('Error loading product. Please try again.');
         }
       }
+
+      function displayProductData(product) {
+        document.getElementById('product-title').textContent = product.name;
+        document.querySelector('.current-price').textContent = `Rs. ${product.price.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+        
+        // Use original image path
+        const mainImagePath = product.images[0];
+        document.getElementById('main-product-image').src = mainImagePath;
+        
+        document.querySelector('.product-description p').textContent = product.description;
+        document.getElementById('product-breadcrumb').textContent = product.name;
+        
+        // Update size and medium information
+        if (product.size) {
+          document.getElementById('product-size').textContent = product.size;
+        }
+        if (product.medium) {
+          document.getElementById('product-medium').textContent = product.medium;
+        }
+        
+        // Create thumbnail gallery dynamically
+        createThumbnailGallery(product);
+        
+        // Update addToCart function to use real product data
+        updateAddToCartFunction(product);
+      }
+
+      function updateAddToCartFunction(product) {
+        // Store product data globally for addToCart function
+        window.currentProduct = product;
+      }
+
+      function showProductError(message) {
+        document.getElementById('product-title').textContent = 'Product Not Found';
+        document.querySelector('.product-description p').textContent = message;
+      }
+
 
       function createThumbnailGallery(product) {
         const thumbnailGallery = document.getElementById('thumbnail-gallery');
@@ -494,17 +288,19 @@
         // Add main image as first thumbnail
         const mainThumbnail = document.createElement('img');
         mainThumbnail.className = 'thumbnail active';
-        mainThumbnail.src = product.image;
-        mainThumbnail.alt = product.title;
+        const mainImagePath = product.images[0];
+        mainThumbnail.src = mainImagePath;
+        mainThumbnail.alt = product.name;
         mainThumbnail.onclick = function() { changeMainImage(this.src); };
         thumbnailGallery.appendChild(mainThumbnail);
         
         // Add hover image as second thumbnail (if different from main image)
-        if (product.hoverImage && product.hoverImage !== product.image) {
+        if (product.images[1] && product.images[1] !== product.images[0]) {
           const hoverThumbnail = document.createElement('img');
           hoverThumbnail.className = 'thumbnail';
-          hoverThumbnail.src = product.hoverImage;
-          hoverThumbnail.alt = product.title + ' Detail';
+          const hoverImagePath = product.images[1];
+          hoverThumbnail.src = hoverImagePath;
+          hoverThumbnail.alt = product.name + ' Detail';
           hoverThumbnail.onclick = function() { changeMainImage(this.src); };
           thumbnailGallery.appendChild(hoverThumbnail);
         }

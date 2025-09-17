@@ -1,11 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
 require('dotenv').config({ path: './config.env' });
 
 const connectDB = require('./config/database');
 const authRoutes = require('./routes/auth');
+const productRoutes = require('./routes/products');
+const orderRoutes = require('./routes/orders');
+const addressRoutes = require('./routes/addresses');
+const adminRoutes = require('./routes/admin');
+const razorpayRoutes = require('./routes/razorpay');
 
 // Connect to MongoDB
 connectDB();
@@ -61,12 +65,17 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/addresses', addressRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/razorpay', razorpayRoutes);
 
-// Serve static files (for production)
+// Serve static files (for both development and production)
+app.use(express.static('../'));
+
+// Serve the main HTML file for any non-API routes (for production)
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('../'));
-  
-  // Serve the main HTML file for any non-API routes
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../main.html'));
   });

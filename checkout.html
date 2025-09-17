@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - Chitralaya</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari&family=Playfair+Display&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="chitra.css" />
     <script src="script.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 
 <body>
@@ -97,51 +99,78 @@
                         <!-- Contact & Shipping Form -->
                         <div class="checkout-form">
                             <h3>Contact & Shipping Information</h3>
-                            <form id="checkout-form">
+                            
+                            <!-- Saved Addresses Section -->
+                            <div class="saved-addresses-section" id="saved-addresses-section" style="display: none;">
                                 <div class="form-group">
-                                    <label for="phone">Phone Number *</label>
-                                    <input type="tel" id="phone" name="phone" required value="+91">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="address1">Address Line 1 *</label>
-                                    <input type="text" id="address1" name="address1" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="address2">Address Line 2 (Optional)</label>
-                                    <input type="text" id="address2" name="address2">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="city">City *</label>
-                                    <input type="text" id="city" name="city" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="country">Country *</label>
-                                    <select id="country" name="country" required>
-                                        <option value="India">India</option>
-                                        
+                                    <label for="savedAddresses">Address Selection</label>
+                                    <select id="savedAddresses" name="savedAddresses" onchange="loadSavedAddress()">
+                                        <option value="">Select an address...</option>
+                                        <option value="new">Use New Address</option>
                                     </select>
                                 </div>
+                                <hr class="form-divider">
+                            </div>
+                            
+                            <form id="checkout-form">
+                                <!-- Address Input Fields (hidden when saved address is selected) -->
+                                <div id="address-input-fields">
+                                    <div class="form-group">
+                                        <label for="fullName">Full Name *</label>
+                                        <input type="text" id="fullName" name="fullName" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="email">Email Address *</label>
+                                        <input type="email" id="email" name="email" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="phone">Phone Number *</label>
+                                        <input type="tel" id="phone" name="phone" required value="+91">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="address">Complete Address *</label>
+                                        <textarea id="address" name="address" required rows="3" placeholder="House/Flat No., Street, Area, Landmark"></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="city">City *</label>
+                                        <input type="text" id="city" name="city" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="state">State *</label>
+                                        <input type="text" id="state" name="state" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="pincode">PIN Code *</label>
+                                        <input type="text" id="pincode" name="pincode" required pattern="[0-9]{6}" placeholder="6-digit PIN code" onblur="autoFillCityCountry()">
+                                    </div>
+                                </div>
 
                                 <div class="form-group">
-                                    <label for="zipcode">ZIP/Postcode *</label>
-                                    <input type="text" id="zipcode" name="zipcode" required onblur="autoFillCityCountry()">
+                                    <label for="paymentMethod">Payment Method *</label>
+                                    <select id="paymentMethod" name="paymentMethod" required>
+                                        <option value="upi">UPI</option>
+                                        <option value="cod" disabled>Cash on Delivery (Coming Soon)</option>
+                                        <option value="card" disabled>Card (Coming Soon)</option>
+                                    </select>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="notes">Order Notes (Optional)</label>
-                                    <input type="text" id="notes" name="notes" placeholder="Write any Customization Request">
+                                    <textarea id="notes" name="notes" rows="2" placeholder="Any special requests or customization details"></textarea>
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="payment">Payment Method *</label>
-                                    <select id="payment" name="payment" required>
-                                        <option value="upi">UPI</option>
-                                        <option value="card" disabled>Card (Currently Unavailable)</option>
-                                    </select>
+                                <!-- Save Address Checkbox (only shown when no saved addresses exist) -->
+                                <div class="form-group" id="save-address-group" style="display: none;">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="saveAddress" name="saveAddress">
+                                        Save this address for future orders
+                                    </label>
                                 </div>
 
                                 <div class="checkout-actions">
@@ -192,6 +221,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             checkLoginAndCart();
             updateCartCounter();
+            
+            // Initialize form submission handler
+            initializeFormSubmission();
         });
 
         // Update cart counter function
@@ -207,41 +239,271 @@
 
         // Auto-fill city and country based on postal code
         function autoFillCityCountry() {
-            const zipcode = document.getElementById('zipcode').value.trim();
+            const zipcode = document.getElementById('pincode').value.trim();
             const cityField = document.getElementById('city');
-            const countryField = document.getElementById('country');
+            const stateField = document.getElementById('state');
             
             if (zipcode.length >= 6) {
                 // Indian postal codes (PIN codes)
                 if (/^[1-9][0-9]{5}$/.test(zipcode)) {
-                    // Set country to India
-                    countryField.value = 'India';
-                    
-                    // Auto-fill city based on postal code patterns
+                    // Auto-fill city and state based on postal code patterns
                     const firstDigit = zipcode.charAt(0);
                     let cityName = '';
+                    let stateName = '';
                     
                     switch(firstDigit) {
-                        case '1': cityName = 'Delhi'; break;
-                        case '2': cityName = 'Mumbai'; break;
-                        case '3': cityName = 'Kolkata'; break;
-                        case '4': cityName = 'Chennai'; break;
-                        case '5': cityName = 'Hyderabad'; break;
-                        case '6': cityName = 'Bangalore'; break;
-                        case '7': cityName = 'Pune'; break;
-                        case '8': cityName = 'Ahmedabad'; break;
-                        case '9': cityName = 'Jaipur'; break;
-                        default: cityName = 'Other'; break;
+                        case '1': cityName = 'Delhi'; stateName = 'Delhi'; break;
+                        case '2': cityName = 'Mumbai'; stateName = 'Maharashtra'; break;
+                        case '3': cityName = 'Kolkata'; stateName = 'West Bengal'; break;
+                        case '4': cityName = 'Chennai'; stateName = 'Tamil Nadu'; break;
+                        case '5': cityName = 'Hyderabad'; stateName = 'Telangana'; break;
+                        case '6': cityName = 'Bangalore'; stateName = 'Karnataka'; break;
+                        case '7': cityName = 'Pune'; stateName = 'Maharashtra'; break;
+                        case '8': cityName = 'Ahmedabad'; stateName = 'Gujarat'; break;
+                        case '9': cityName = 'Jaipur'; stateName = 'Rajasthan'; break;
+                        default: cityName = 'Other'; stateName = 'Other'; break;
                     }
                     
                     cityField.value = cityName;
+                    stateField.value = stateName;
                 }
             }
         }
 
+        // Add real-time validation
+        function addRealTimeValidation() {
+            const requiredFields = ['fullName', 'email', 'phone', 'address', 'city', 'state', 'pincode', 'paymentMethod'];
+            
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('blur', function() {
+                        validateField(this);
+                    });
+                    
+                    field.addEventListener('input', function() {
+                        // Remove error styling and error message when user starts typing
+                        if (this.classList.contains('error')) {
+                            this.classList.remove('error');
+                            clearFieldError(this);
+                        }
+                    });
+                    
+                    field.addEventListener('change', function() {
+                        // Validate on change for select fields
+                        if (this.tagName === 'SELECT') {
+                            validateField(this);
+                        }
+                    });
+                }
+            });
+        }
+
+        function validateField(field) {
+            const value = field.value.trim();
+            let isValid = true;
+            let errorMessage = '';
+
+            switch(field.id) {
+                case 'fullName':
+                    if (!value) {
+                        isValid = false;
+                        errorMessage = 'Full Name is required';
+                    } else if (value.trim().length < 2) {
+                        isValid = false;
+                        errorMessage = 'Full Name must be at least 2 characters';
+                    }
+                    break;
+                case 'email':
+                    if (!value) {
+                        isValid = false;
+                        errorMessage = 'Email is required';
+                    } else if (!isValidEmail(value)) {
+                        isValid = false;
+                        errorMessage = 'Please enter a valid email address';
+                    }
+                    break;
+                case 'phone':
+                    if (!value || value === '+91') {
+                        isValid = false;
+                        errorMessage = 'Phone number is required';
+                    } else {
+                        const phoneNumber = value.replace(/[\s\-\(\)]/g, '');
+                        if (phoneNumber.length !== 13 || !phoneNumber.startsWith('+91') || !/^\+91[0-9]{10}$/.test(phoneNumber)) {
+                            isValid = false;
+                            errorMessage = 'Phone must be exactly 10 digits after +91 (e.g., +91 9876543210)';
+                        }
+                    }
+                    break;
+                case 'address':
+                    if (!value) {
+                        isValid = false;
+                        errorMessage = 'Address is required';
+                    } else if (value.trim().length < 10) {
+                        isValid = false;
+                        errorMessage = 'Address must be at least 10 characters';
+                    }
+                    break;
+                case 'city':
+                    if (!value) {
+                        isValid = false;
+                        errorMessage = 'City is required';
+                    } else if (value.trim().length < 2) {
+                        isValid = false;
+                        errorMessage = 'City must be at least 2 characters';
+                    }
+                    break;
+                case 'state':
+                    if (!value) {
+                        isValid = false;
+                        errorMessage = 'State is required';
+                    } else if (value.trim().length < 2) {
+                        isValid = false;
+                        errorMessage = 'State must be at least 2 characters';
+                    }
+                    break;
+                case 'pincode':
+                    if (!value) {
+                        isValid = false;
+                        errorMessage = 'PIN Code is required';
+                    } else if (!/^[0-9]{6}$/.test(value)) {
+                        isValid = false;
+                        errorMessage = 'PIN Code must be exactly 6 digits';
+                    }
+                    break;
+                case 'paymentMethod':
+                    if (!value) {
+                        isValid = false;
+                        errorMessage = 'Payment method is required';
+                    }
+                    break;
+            }
+
+            if (!isValid) {
+                field.classList.add('error');
+                showFieldError(field, errorMessage);
+            } else {
+                field.classList.remove('error');
+                clearFieldError(field);
+            }
+
+            return isValid;
+        }
+
+        function showFieldError(field, message) {
+            clearFieldError(field);
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'field-error';
+            errorDiv.textContent = message;
+            field.parentNode.appendChild(errorDiv);
+        }
+
+        function clearFieldError(field) {
+            const existingError = field.parentNode.querySelector('.field-error');
+            if (existingError) {
+                existingError.remove();
+            }
+        }
+
+        function findFirstEmptyField() {
+            const requiredFields = ['fullName', 'email', 'phone', 'address', 'city', 'state', 'pincode', 'paymentMethod'];
+            
+            for (const fieldId of requiredFields) {
+                const field = document.getElementById(fieldId);
+                
+                if (field) {
+                    // Get the value and check if it's empty
+                    let value = '';
+                    if (field.type === 'select-one') {
+                        value = field.value || '';
+                    } else {
+                        value = field.value ? field.value.trim() : '';
+                    }
+                    
+                    // Check if field is empty
+                    if (!value || value === '' || value === 'undefined' || value === 'null') {
+                        return field;
+                    }
+                }
+            }
+            return null;
+        }
+
+        function findFirstEmptyFieldFromValidation(orderData) {
+            // Check fields in the same order as validation with proper format checking
+            if (!orderData.shippingAddress.fullName || orderData.shippingAddress.fullName.trim() === '' || orderData.shippingAddress.fullName.trim().length < 2) {
+                return document.getElementById('fullName');
+            }
+            if (!orderData.shippingAddress.email || orderData.shippingAddress.email.trim() === '' || !isValidEmail(orderData.shippingAddress.email)) {
+                return document.getElementById('email');
+            }
+            if (!orderData.shippingAddress.phone || orderData.shippingAddress.phone.trim() === '' || orderData.shippingAddress.phone.trim() === '+91') {
+                return document.getElementById('phone');
+            } else {
+                const phoneNumber = orderData.shippingAddress.phone.replace(/[\s\-\(\)]/g, '');
+                if (phoneNumber.length !== 13 || !phoneNumber.startsWith('+91') || !/^\+91[0-9]{10}$/.test(phoneNumber)) {
+                    return document.getElementById('phone');
+                }
+            }
+            if (!orderData.shippingAddress.address || orderData.shippingAddress.address.trim() === '' || orderData.shippingAddress.address.trim().length < 10) {
+                return document.getElementById('address');
+            }
+            if (!orderData.shippingAddress.city || orderData.shippingAddress.city.trim() === '' || orderData.shippingAddress.city.trim().length < 2) {
+                return document.getElementById('city');
+            }
+            if (!orderData.shippingAddress.state || orderData.shippingAddress.state.trim() === '' || orderData.shippingAddress.state.trim().length < 2) {
+                return document.getElementById('state');
+            }
+            if (!orderData.shippingAddress.pincode || orderData.shippingAddress.pincode.trim() === '' || !/^[0-9]{6}$/.test(orderData.shippingAddress.pincode)) {
+                return document.getElementById('pincode');
+            }
+            if (!orderData.paymentMethod) {
+                return document.getElementById('paymentMethod');
+            }
+            return null;
+        }
+
+        function getFieldErrorMessage(fieldId) {
+            const messages = {
+                'fullName': 'Full Name is required',
+                'email': 'Email Address is required',
+                'phone': 'Phone Number is required',
+                'address': 'Complete Address is required',
+                'city': 'City is required',
+                'state': 'State is required',
+                'pincode': 'PIN Code is required',
+                'paymentMethod': 'Payment Method is required'
+            };
+            return messages[fieldId] || 'This field is required';
+        }
+
+        function clearAllFormErrors() {
+            const requiredFields = ['fullName', 'email', 'phone', 'address', 'city', 'state', 'pincode', 'paymentMethod'];
+            
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.classList.remove('error');
+                    clearFieldError(field);
+                }
+            });
+        }
+
+
         function checkLoginAndCart() {
             const token = localStorage.getItem('authToken');
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            // Migrate old cart format (price as string) to new format (price as number)
+            cart = cart.map(item => {
+                if (typeof item.price === 'string') {
+                    return {
+                        ...item,
+                        price: parseFloat(item.price.replace(/,/g, '')) || 0
+                    };
+                }
+                return item;
+            });
             
             // Check if user is logged in
             if (!token) {
@@ -258,6 +520,30 @@
             // Show checkout content
             document.getElementById('checkout-content').style.display = 'block';
             loadOrderSummary(cart);
+            
+            // Auto-fill user information
+            autoFillUserInfo();
+            
+            // Initialize real-time validation
+            addRealTimeValidation();
+            
+            // Load saved addresses
+            loadSavedAddresses();
+            
+        }
+
+        function autoFillUserInfo() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                // Auto-fill name and email
+                document.getElementById('fullName').value = `${currentUser.firstname} ${currentUser.lastname}`;
+                document.getElementById('email').value = currentUser.email;
+            }
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
         }
 
         function loadOrderSummary(cart) {
@@ -267,7 +553,8 @@
             orderItemsContainer.innerHTML = '';
             
             cart.forEach(item => {
-                const itemTotal = parseFloat(item.price.replace(/,/g, '')) * item.quantity;
+                const price = typeof item.price === 'string' ? parseFloat(item.price.replace(/,/g, '')) : item.price;
+                const itemTotal = price * item.quantity;
                 subtotal += itemTotal;
                 
                 const orderItem = document.createElement('div');
@@ -291,19 +578,404 @@
         }
 
         // Handle form submission
-        document.getElementById('checkout-form').addEventListener('submit', function(e) {
+        function initializeFormSubmission() {
+            const checkoutForm = document.getElementById('checkout-form');
+            if (!checkoutForm) {
+                console.error('Checkout form not found!');
+                return;
+            }
+            
+            checkoutForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+            // Form submission started
+            
+            // Check if user is logged in
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert('Please login to place an order');
+                window.location.href = 'login.html';
+                return;
+            }
             
             const formData = new FormData(this);
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            // Migrate old cart format (price as string) to new format (price as number)
+            cart = cart.map(item => {
+                if (typeof item.price === 'string') {
+                    return {
+                        ...item,
+                        price: parseFloat(item.price.replace(/,/g, '')) || 0
+                    };
+                }
+                return item;
+            });
+            
+            
+            // Check if a saved address is selected
+            const savedAddressSelect = document.getElementById('savedAddresses');
+            let shippingAddress;
+            
+            if (savedAddressSelect && savedAddressSelect.value && savedAddressSelect.value !== 'new' && selectedAddressData) {
+                // Use saved address data
+                shippingAddress = {
+                    fullName: selectedAddressData.fullName,
+                    email: selectedAddressData.email,
+                    phone: selectedAddressData.phone,
+                    address: selectedAddressData.address,
+                    city: selectedAddressData.city,
+                    state: selectedAddressData.state,
+                    pincode: selectedAddressData.pincode
+                };
+            } else {
+                // Use form data for new address (when "new" is selected or no address is selected)
+                shippingAddress = {
+                    fullName: formData.get('fullName'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    address: formData.get('address'),
+                    city: formData.get('city'),
+                    state: formData.get('state'),
+                    pincode: formData.get('pincode')
+                };
+            }
+            
+            // Prepare order data for API
             const orderData = {
-                phone: formData.get('phone'),
-                address: formData.get('address'),
-                notes: formData.get('notes'),
-                items: JSON.parse(localStorage.getItem('cart')) || [],
-                total: document.getElementById('checkout-total').textContent
+                items: cart.map(item => ({
+                    product: item.id || item._id,
+                    quantity: item.quantity
+                })),
+                shippingAddress: shippingAddress,
+                paymentMethod: formData.get('paymentMethod'),
+                notes: formData.get('notes')
             };
             
-            // For now, just show success message
+
+            // Enhanced validation for all required fields
+            const validationErrors = [];
+            
+            // Only validate address fields if no saved address is selected or "new" is selected
+            if (!savedAddressSelect || !savedAddressSelect.value || savedAddressSelect.value === 'new') {
+                if (!orderData.shippingAddress.fullName || orderData.shippingAddress.fullName.trim() === '') {
+                    validationErrors.push('Full Name is required');
+                } else if (orderData.shippingAddress.fullName.trim().length < 2) {
+                    validationErrors.push('Full Name must be at least 2 characters');
+                }
+                
+                if (!orderData.shippingAddress.email || orderData.shippingAddress.email.trim() === '') {
+                    validationErrors.push('Email Address is required');
+                } else if (!isValidEmail(orderData.shippingAddress.email)) {
+                    validationErrors.push('Please enter a valid email address');
+                }
+                
+                if (!orderData.shippingAddress.phone || orderData.shippingAddress.phone.trim() === '' || orderData.shippingAddress.phone.trim() === '+91') {
+                    validationErrors.push('Phone Number is required');
+                } else {
+                    const phoneNumber = orderData.shippingAddress.phone.replace(/[\s\-\(\)]/g, ''); // Remove spaces, dashes, parentheses
+                    if (phoneNumber.length !== 13 || !phoneNumber.startsWith('+91') || !/^\+91[0-9]{10}$/.test(phoneNumber)) {
+                        validationErrors.push('Phone Number must be exactly 10 digits after +91 (e.g., +91 9876543210)');
+                    }
+                }
+                
+                if (!orderData.shippingAddress.address || orderData.shippingAddress.address.trim() === '') {
+                    validationErrors.push('Complete Address is required');
+                } else if (orderData.shippingAddress.address.trim().length < 10) {
+                    validationErrors.push('Address must be at least 10 characters');
+                }
+                
+                if (!orderData.shippingAddress.city || orderData.shippingAddress.city.trim() === '') {
+                    validationErrors.push('City is required');
+                } else if (orderData.shippingAddress.city.trim().length < 2) {
+                    validationErrors.push('City must be at least 2 characters');
+                }
+                
+                if (!orderData.shippingAddress.state || orderData.shippingAddress.state.trim() === '') {
+                    validationErrors.push('State is required');
+                } else if (orderData.shippingAddress.state.trim().length < 2) {
+                    validationErrors.push('State must be at least 2 characters');
+                }
+                
+                if (!orderData.shippingAddress.pincode || orderData.shippingAddress.pincode.trim() === '') {
+                    validationErrors.push('PIN Code is required');
+                } else if (!/^[0-9]{6}$/.test(orderData.shippingAddress.pincode)) {
+                    validationErrors.push('PIN Code must be exactly 6 digits');
+                }
+            }
+            
+            if (!orderData.paymentMethod) {
+                validationErrors.push('Payment Method is required');
+            }
+            
+            if (validationErrors.length > 0) {
+                // Find the first empty field based on the validation errors
+                const firstEmptyField = findFirstEmptyFieldFromValidation(orderData);
+                
+                if (firstEmptyField) {
+                    // Clear any existing errors first
+                    clearAllFormErrors();
+                    
+                    // Scroll to the field
+                    firstEmptyField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // Add error styling
+                    firstEmptyField.classList.add('error');
+                    showFieldError(firstEmptyField, getFieldErrorMessage(firstEmptyField.id));
+                    
+                    // Focus on the field
+                    setTimeout(() => {
+                        firstEmptyField.focus();
+                    }, 100);
+                } else {
+                    // If we can't find the field, try to highlight the first field in the form
+                    const firstField = document.getElementById('fullName');
+                    if (firstField) {
+                        firstField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstField.focus();
+                        firstField.classList.add('error');
+                        showFieldError(firstField, 'Please fill in all required fields');
+                    }
+                }
+                return;
+            }
+            
+            try {
+                // Show loading state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Processing...';
+                submitBtn.disabled = true;
+                
+                // Check payment method
+                if (orderData.paymentMethod === 'upi') {
+                    // Handle UPI payment with Razorpay
+                    await handleUPIPayment(orderData, token, submitBtn, originalText);
+                } else {
+                    // Handle other payment methods (COD, etc.)
+                    await handleOtherPayment(orderData, token, submitBtn, originalText);
+                }
+            } catch (error) {
+                console.error('Error processing order:', error);
+                alert('Error processing order. Please try again.');
+                
+                // Reset button state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'Place Order';
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Handle payment success
+        async function handlePaymentSuccess(razorpayResponse, orderId, token, razorpayOrderId) {
+            try {
+                
+                // Verify payment with backend
+                const response = await fetch('http://localhost:3000/api/razorpay/verify-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        orderId: orderId,
+                        razorpayOrderId: razorpayOrderId,
+                        paymentId: razorpayResponse.razorpay_payment_id,
+                        signature: razorpayResponse.razorpay_signature
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Payment verified successfully
+                    alert('Payment successful! Your order has been placed. We will contact you soon to confirm the details and begin creating your custom artwork.');
+                    
+                    // Clear cart
+                    localStorage.removeItem('cart');
+                    
+                    // Dispatch cart update event
+                    window.dispatchEvent(new CustomEvent('cartUpdated'));
+                    
+                    // Redirect to home page
+                    window.location.href = 'main.html';
+                } else {
+                    alert('Payment verification failed. Please contact support.');
+                }
+            } catch (error) {
+                console.error('Payment verification error:', error);
+                alert('Payment verification failed. Please contact support.');
+            }
+        }
+        
+        // Handle UPI payment with Razorpay
+        async function handleUPIPayment(orderData, token, submitBtn, originalText) {
+            try {
+                
+                // First create the order in our database
+                const response = await fetch('http://localhost:3000/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        ...orderData,
+                        paymentStatus: 'pending'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(`Order creation failed: ${data.message || 'Unknown error'}`);
+                }
+                
+                if (data.success) {
+                    // Clear all form errors
+                    clearAllFormErrors();
+                    
+                    // Calculate total amount
+                    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    const totalAmount = cart.reduce((sum, item) => {
+                        const price = typeof item.price === 'string' ? parseFloat(item.price.replace(/,/g, '')) : item.price;
+                        return sum + (price * item.quantity);
+                    }, 0);
+                    
+                    // Validate total amount
+                    if (!totalAmount || totalAmount <= 0) {
+                        throw new Error('Invalid cart total - no items or zero amount');
+                    }
+                    
+                    // Validate order ID exists
+                    if (!data.data || !data.data.order || !data.data.order._id) {
+                        throw new Error('Order creation failed - invalid order ID received');
+                    }
+                    
+                    // Create Razorpay order
+                    const razorpayOrderData = {
+                        amount: Math.round(totalAmount * 100), // Convert to paise
+                        currency: 'INR',
+                        orderId: data.data.order._id
+                    };
+                    
+                    
+                    const razorpayResponse = await fetch('http://localhost:3000/api/razorpay/create-order', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(razorpayOrderData)
+                    });
+                    
+                    const razorpayData = await razorpayResponse.json();
+                    
+                    if (!razorpayResponse.ok) {
+                        throw new Error(`Razorpay order creation failed: ${razorpayData.message || 'Unknown error'}`);
+                    }
+                    
+                    if (razorpayData.success) {
+                        // Get Razorpay key
+                        const keyResponse = await fetch('http://localhost:3000/api/razorpay/key', {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+                        const keyData = await keyResponse.json();
+                        
+                        if (!keyResponse.ok) {
+                            throw new Error(`Failed to get payment key: ${keyData.message || 'Unknown error'}`);
+                        }
+                        
+                        if (!keyData.success) {
+                            throw new Error('Failed to get payment key');
+                        }
+                        
+                        // Initialize Razorpay
+                        const options = {
+                            key: keyData.data.key,
+                            amount: razorpayData.data.amount,
+                            currency: razorpayData.data.currency,
+                            name: 'Chitralaya',
+                            description: 'Artwork Purchase',
+                            order_id: razorpayData.data.id,
+                            handler: function (response) {
+                                // Payment successful
+                                handlePaymentSuccess(response, data.data.order._id, token, razorpayData.data.id);
+                            },
+                            prefill: {
+                                name: orderData.shippingAddress.fullName,
+                                email: orderData.shippingAddress.email,
+                                contact: orderData.shippingAddress.phone
+                            },
+                            theme: {
+                                color: '#d35400'
+                            },
+                            method: {
+                                upi: true
+                            }
+                        };
+                        
+                        try {
+                            const rzp = new Razorpay(options);
+                            rzp.open();
+                            
+                            // Reset button state
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        } catch (rzpError) {
+                            console.error('Razorpay initialization error:', rzpError);
+                            throw new Error('Failed to initialize payment gateway');
+                        }
+                        
+                    } else {
+                        throw new Error('Failed to create Razorpay order');
+                    }
+                } else {
+                    throw new Error(data.message || 'Failed to create order');
+                }
+            } catch (error) {
+                console.error('Error in UPI payment:', error);
+                alert(`UPI Payment Error: ${error.message}`);
+                
+                // Reset button state
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+        
+        // Handle other payment methods (COD, etc.)
+        async function handleOtherPayment(orderData, token, submitBtn, originalText) {
+            try {
+                // Create order via API
+                const response = await fetch('http://localhost:3000/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Clear all form errors
+                    clearAllFormErrors();
+                    
+                    // Save address if checkbox is checked or if no saved address was used
+                    const savedAddressSelect = document.getElementById('savedAddresses');
+                    const saveAddressCheckbox = document.getElementById('saveAddress');
+                    
+                    if (saveAddressCheckbox && saveAddressCheckbox.checked) {
+                        // User explicitly wants to save this address
+                        await saveAddressFromCheckout(orderData.shippingAddress);
+                    } else if (!savedAddressSelect.value || savedAddressSelect.value === 'new') {
+                        // Auto-save the address if it's not from a saved address (existing behavior)
+                        await autoSaveAddressFromOrder(orderData.shippingAddress);
+                    }
+                    
+                    // Order created successfully
             alert('Order placed successfully! We will contact you soon to confirm the details and begin creating your custom artwork.');
             
             // Clear cart
@@ -314,7 +986,289 @@
             
             // Redirect to home page
             window.location.href = 'main.html';
-        });
+                } else {
+                    // Handle API errors
+                    alert(`Order failed: ${data.message}`);
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }
+                
+            } catch (error) {
+                console.error('Order creation error:', error);
+                alert('Network error. Please check your connection and try again.');
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+        }
+
+        // Saved Addresses Functions
+        async function loadSavedAddresses() {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    document.getElementById('saved-addresses-section').style.display = 'none';
+                    return;
+                }
+
+                const response = await fetch('http://localhost:3000/api/addresses', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const addresses = data.data.addresses;
+                    
+                    if (addresses && addresses.length > 0) {
+                        populateSavedAddressesDropdown(addresses);
+                        document.getElementById('saved-addresses-section').style.display = 'block';
+                        document.getElementById('address-input-fields').style.display = 'none';
+                        document.getElementById('save-address-group').style.display = 'none';
+                    } else {
+                        // Even with no saved addresses, show the dropdown with "Use New Address" option
+                        populateSavedAddressesDropdown([]);
+                        document.getElementById('saved-addresses-section').style.display = 'block';
+                        document.getElementById('address-input-fields').style.display = 'none';
+                        document.getElementById('save-address-group').style.display = 'none';
+                    }
+                } else {
+                    // Even with error, show the dropdown with "Use New Address" option
+                    populateSavedAddressesDropdown([]);
+                    document.getElementById('saved-addresses-section').style.display = 'block';
+                    document.getElementById('address-input-fields').style.display = 'none';
+                    document.getElementById('save-address-group').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading saved addresses:', error);
+                // Even with error, show the dropdown with "Use New Address" option
+                populateSavedAddressesDropdown([]);
+                document.getElementById('saved-addresses-section').style.display = 'block';
+                document.getElementById('address-input-fields').style.display = 'none';
+                document.getElementById('save-address-group').style.display = 'none';
+            }
+        }
+
+        function populateSavedAddressesDropdown(addresses) {
+            const select = document.getElementById('savedAddresses');
+            select.innerHTML = '<option value="">Select an address...</option>';
+            
+            // Add saved addresses
+            addresses.forEach(address => {
+                const option = document.createElement('option');
+                option.value = address._id;
+                option.textContent = `${address.name}${address.isDefault ? ' (Default)' : ''} - ${address.city}, ${address.state}`;
+                select.appendChild(option);
+            });
+            
+            // Add "Use New Address" option
+            const newAddressOption = document.createElement('option');
+            newAddressOption.value = 'new';
+            newAddressOption.textContent = 'Use New Address';
+            select.appendChild(newAddressOption);
+        }
+
+        function loadSavedAddress() {
+            const select = document.getElementById('savedAddresses');
+            const addressId = select.value;
+            
+            if (!addressId) {
+                // If no address selected, hide the address input fields and save checkbox
+                document.getElementById('address-input-fields').style.display = 'none';
+                document.getElementById('save-address-group').style.display = 'none';
+                selectedAddressData = null;
+                return;
+            }
+
+            if (addressId === 'new') {
+                // If "Use New Address" is selected, show the address input fields and save checkbox
+                document.getElementById('address-input-fields').style.display = 'block';
+                document.getElementById('save-address-group').style.display = 'block';
+                selectedAddressData = null;
+                return;
+            }
+
+            // Hide the address input fields and save checkbox when using a saved address
+            document.getElementById('address-input-fields').style.display = 'none';
+            document.getElementById('save-address-group').style.display = 'none';
+
+            // Fetch the full address details for the selected saved address
+            fetchAddressDetails(addressId);
+        }
+
+        // Store the selected address data globally
+        let selectedAddressData = null;
+
+        async function fetchAddressDetails(addressId) {
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`http://localhost:3000/api/addresses/${addressId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const address = data.data.address;
+                    
+                    // Store the address data globally for form submission
+                    selectedAddressData = address;
+                    
+                    // Fill the form with the saved address (even though fields are hidden)
+                    document.getElementById('fullName').value = address.fullName;
+                    document.getElementById('email').value = address.email;
+                    document.getElementById('phone').value = address.phone;
+                    document.getElementById('address').value = address.address;
+                    document.getElementById('city').value = address.city;
+                    document.getElementById('state').value = address.state;
+                    document.getElementById('pincode').value = address.pincode;
+                } else {
+                    const errorData = await response.json();
+                    console.error('Error fetching address details:', errorData);
+                    alert('Error loading address details');
+                }
+            } catch (error) {
+                console.error('Error fetching address details:', error);
+                alert('Error loading address details');
+            }
+        }
+
+
+        async function saveAddressFromCheckout(shippingAddress) {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    return; // User not logged in, skip saving
+                }
+
+                // Check if this address already exists
+                const existingAddressesResponse = await fetch('http://localhost:3000/api/addresses', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                let addresses = [];
+                if (existingAddressesResponse.ok) {
+                    const data = await existingAddressesResponse.json();
+                    addresses = data.data.addresses;
+                    
+                    // Check if this exact address already exists
+                    const addressExists = addresses.some(addr => 
+                        addr.fullName === shippingAddress.fullName &&
+                        addr.address === shippingAddress.address &&
+                        addr.city === shippingAddress.city &&
+                        addr.state === shippingAddress.state &&
+                        addr.pincode === shippingAddress.pincode
+                    );
+
+                    if (addressExists) {
+                        return; // Address already exists, don't save again
+                    }
+                }
+
+                // Generate a default name for the address
+                const addressCount = addresses.length;
+                const addressName = addressCount === 0 ? 'Home' : `Address ${addressCount + 1}`;
+
+                const addressData = {
+                    name: addressName,
+                    fullName: shippingAddress.fullName,
+                    email: shippingAddress.email,
+                    phone: shippingAddress.phone,
+                    address: shippingAddress.address,
+                    city: shippingAddress.city,
+                    state: shippingAddress.state,
+                    pincode: shippingAddress.pincode,
+                    isDefault: addressCount === 0 // First address becomes default
+                };
+
+                const response = await fetch('http://localhost:3000/api/addresses', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(addressData)
+                });
+
+                if (response.ok) {
+                    // Reload the saved addresses to update the dropdown
+                    loadSavedAddresses();
+                }
+            } catch (error) {
+                console.error('Error saving address from checkout:', error);
+                // Don't show error to user as this is a background operation
+            }
+        }
+
+        async function autoSaveAddressFromOrder(shippingAddress) {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    return; // User not logged in, skip saving
+                }
+
+                // Check if this address already exists
+                const existingAddresses = await fetch('http://localhost:3000/api/addresses', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (existingAddresses.ok) {
+                    const data = await existingAddresses.json();
+                    const addresses = data.data.addresses;
+                    
+                    // Check if this exact address already exists
+                    const addressExists = addresses.some(addr => 
+                        addr.fullName === shippingAddress.fullName &&
+                        addr.address === shippingAddress.address &&
+                        addr.city === shippingAddress.city &&
+                        addr.state === shippingAddress.state &&
+                        addr.pincode === shippingAddress.pincode
+                    );
+
+                    if (addressExists) {
+                        return; // Address already exists, don't save again
+                    }
+                }
+
+                // Generate a default name for the address
+                const addressCount = existingAddresses.ok ? (await existingAddresses.json()).data.addresses.length : 0;
+                const addressName = addressCount === 0 ? 'Home' : `Address ${addressCount + 1}`;
+
+                const addressData = {
+                    name: addressName,
+                    fullName: shippingAddress.fullName,
+                    email: shippingAddress.email,
+                    phone: shippingAddress.phone,
+                    address: shippingAddress.address,
+                    city: shippingAddress.city,
+                    state: shippingAddress.state,
+                    pincode: shippingAddress.pincode,
+                    isDefault: addressCount === 0 // First address becomes default
+                };
+
+                const response = await fetch('http://localhost:3000/api/addresses', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(addressData)
+                });
+
+                if (response.ok) {
+                    // Address automatically saved
+                }
+            } catch (error) {
+                console.error('Error auto-saving address:', error);
+                // Don't show error to user as this is a background operation
+            }
+        }
     </script>
 </body>
 </html>

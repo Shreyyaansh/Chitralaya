@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - Chitralaya</title>
-    <link rel="stylesheet" href="chitra.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari&family=Playfair+Display&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="chitra.css?v=6" />
     <script src="script.js"></script>
 </head>
 
@@ -45,7 +46,8 @@
 
     <main class="main-content">
         <div class="container">
-            <div class="profile-container">
+            <!-- Profile Content -->
+            <div class="profile-container" id="profile-content">
                 <div class="profile-header">
                     <h1>My Profile</h1>
                     <p>Manage your account information and preferences</p>
@@ -69,12 +71,109 @@
                             <button class="btn-danger" onclick="logout()">Logout</button>
                         </div>
                     </div>
+                        </div>
+                    </div>
 
+            <!-- Orders Content -->
+            <div class="profile-container" id="orders-content" style="display: none;">
+                <div class="profile-header">
+                    <button class="back-btn" onclick="backToProfile()">← Back to Profile</button>
+                    <h1>Your Orders</h1>
+                    <p>Track your beautiful artwork purchases</p>
+                </div>
+                
+                <div class="orders-container" id="orders-container">
+                    <div class="loading-message" id="orders-loading">
+                        <p>Loading your orders...</p>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Addresses Content -->
+            <div class="profile-container" id="addresses-content" style="display: none;">
+                <div class="profile-header">
+                    <button class="back-btn" onclick="backToProfile()">← Back to Profile</button>
+                    <h1>Manage Addresses</h1>
+                    <p>Save and manage your shipping addresses</p>
+                </div>
+                
+                <div class="addresses-container">
+                    <div class="addresses-actions">
+                        <button class="btn-primary" onclick="showAddAddressForm()">Add New Address</button>
+                    </div>
+                    
+                    <div class="addresses-list" id="addresses-list">
+                        <div class="loading-message" id="addresses-loading">
+                            <p>Loading your addresses...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Add/Edit Address Form -->
+                    <div class="address-form-container" id="address-form-container" style="display: none;">
+                        <div class="address-form-header">
+                            <h3 id="address-form-title">Add New Address</h3>
+                            <button class="btn-secondary" onclick="hideAddAddressForm()">Cancel</button>
+                        </div>
+                        
+                        <form id="address-form" class="address-form">
+                            <div class="form-group">
+                                <label for="address-name">Address Name *</label>
+                                <input type="text" id="address-name" name="name" required placeholder="e.g., Home, Office">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="address-fullName">Full Name *</label>
+                                <input type="text" id="address-fullName" name="fullName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="address-email">Email Address *</label>
+                                <input type="email" id="address-email" name="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="address-phone">Phone Number *</label>
+                                <input type="tel" id="address-phone" name="phone" required value="+91">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="address-address">Complete Address *</label>
+                                <textarea id="address-address" name="address" required rows="3" placeholder="House/Flat No., Street, Area, Landmark"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="address-city">City *</label>
+                                <input type="text" id="address-city" name="city" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="address-state">State *</label>
+                                <input type="text" id="address-state" name="state" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="address-pincode">PIN Code *</label>
+                                <input type="text" id="address-pincode" name="pincode" required pattern="[0-9]{6}" placeholder="6-digit PIN code">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="address-isDefault" name="isDefault">
+                                    Set as default address
+                                </label>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">Save Address</button>
+                                <button type="button" class="btn-secondary" onclick="hideAddAddressForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
+
 
     <footer class="footer" id="about">
         <div class="footer-content">
@@ -156,15 +255,178 @@
         }
 
 
-        function manageAddress() {
-            // For now, show an alert. In a real app, this would open an address management modal or page
-            alert('Address management feature coming soon! You will be able to add, edit, and delete your shipping addresses here.');
-        }
 
         function viewOrders() {
-            // For now, show an alert. In a real app, this would show order history
-            alert('Order history feature coming soon! You will be able to view all your past orders, track their status, and download invoices here.');
+            // Hide profile content
+            document.getElementById('profile-content').style.display = 'none';
+            
+            // Show orders content
+            document.getElementById('orders-content').style.display = 'block';
+            
+            // Load orders
+            loadUserOrders();
         }
+
+        function backToProfile() {
+            // Hide orders content
+            document.getElementById('orders-content').style.display = 'none';
+            
+            // Hide addresses content
+            document.getElementById('addresses-content').style.display = 'none';
+            
+            // Show profile content
+            document.getElementById('profile-content').style.display = 'block';
+        }
+
+        async function loadUserOrders() {
+            try {
+                const token = localStorage.getItem('authToken');
+                console.log('Token found:', token ? 'Yes' : 'No');
+                
+                if (!token) {
+                    document.getElementById('orders-container').innerHTML = '<div class="empty-state"><p>Please login to view your orders</p></div>';
+                    return;
+                }
+
+                console.log('Fetching orders from http://localhost:3000/api/orders...');
+                const response = await fetch('http://localhost:3000/api/orders', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Orders data:', data);
+                    displayOrders(data.data.orders);
+                } else {
+                    const errorData = await response.json();
+                    console.error('Error response:', errorData);
+                    document.getElementById('orders-container').innerHTML = `<div class="error-message"><p>Failed to load orders: ${errorData.message || 'Unknown error'}</p></div>`;
+                }
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                document.getElementById('orders-container').innerHTML = `<div class="error-message"><p>Error loading orders: ${error.message}</p></div>`;
+            }
+        }
+
+        function displayOrders(orders) {
+    const container = document.getElementById('orders-container');
+    
+    if (!orders || orders.length === 0) {
+        container.innerHTML = '<div class="empty-state"><p>No orders found</p></div>';
+        return;
+    }
+
+           const ordersHTML = orders.map(order => {
+               const firstItem = order.items[0];
+               const hasMultipleItems = order.items.length > 1;
+               const additionalCount = order.items.length - 1;
+               
+               // Calculate total quantity of all items
+               const totalQuantity = order.items.reduce((sum, item) => sum + item.quantity, 0);
+               
+               return `
+                   <div class="order-card" style="margin-bottom: 30px;">
+                       <!-- Order Preview -->
+                       <div class="order-preview">
+                           <div class="order-image">
+                               <img src="${firstItem.product.images[0]}" 
+                                    alt="${firstItem.product.name}">
+                               ${hasMultipleItems ? `<div class="additional-count">+${additionalCount}</div>` : ''}
+                           </div>
+
+                           <div class="order-info">
+                               <h3>
+                                   ${firstItem.product.name}
+                                   ${hasMultipleItems ? `<span class="title-badge">+${additionalCount} more</span>` : ''}
+                               </h3>
+                               <p class="order-artist">Artist: ${firstItem.product.artist}</p>
+                               <p class="order-category">Category: ${firstItem.product.category}</p>
+                               <p class="order-quantity">Total Quantity: ${totalQuantity}</p>
+                               <div class="order-subtotal">
+                                   <p>Total Amount: ₹${order.totalAmount.toLocaleString()}</p>
+                               </div>
+                           </div>
+
+                           <div class="order-right-section">
+                               <div class="order-actions">
+                                   <button class="btn-secondary" onclick="toggleOrderDetails('${order._id}')">
+                                       View Details
+                                   </button>
+                               </div>
+                               
+                               <div class="order-status">
+                                   <span class="status-label">Order Status:</span>
+                                   <span class="status-value status-${order.orderStatus || 'pending'}">${(order.orderStatus || 'pending').charAt(0).toUpperCase() + (order.orderStatus || 'pending').slice(1)}</span>
+                               </div>
+                               
+                               <div class="payment-status">
+                                   <span class="status-label">Payment Status:</span>
+                                   <span class="status-value payment-${order.paymentStatus || 'pending'}">${(order.paymentStatus || 'pending').charAt(0).toUpperCase() + (order.paymentStatus || 'pending').slice(1)}</span>
+                               </div>
+                           </div>
+                </div>
+
+                <!-- Order Details (hidden until expanded) -->
+                <div class="order-details" id="details-${order._id}" style="display: none;">
+                    
+                    <div class="order-items-list">
+                        <h4>Ordered Paintings (${order.items.length} item${order.items.length > 1 ? 's' : ''})</h4>
+                        <ul class="ordered-list">
+                            ${order.items.map(item => `
+                                <li>
+                                    <strong>${item.product.name}</strong> 
+                                    — Qty: ${item.quantity}, Price: ₹${item.price.toLocaleString()}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="order-shipping">
+                        <h4>Shipping Address</h4>
+                        <p><strong>${order.shippingAddress.fullName}</strong></p>
+                        <p>${order.shippingAddress.address}</p>
+                        <p>${order.shippingAddress.city}, ${order.shippingAddress.state} ${order.shippingAddress.pincode}</p>
+                        <p>Phone: ${order.shippingAddress.phone}</p>
+                    </div>
+
+                    ${order.notes ? `
+                        <div class="order-notes">
+                            <h4>Order Notes</h4>
+                            <p>${order.notes}</p>
+                        </div>
+                    ` : ''}
+
+                    <div class="order-footer">
+                        <p><strong>Payment Method:</strong> ${order.paymentMethod}</p>
+                        <p><strong>Total Amount:</strong> ₹${order.totalAmount.toLocaleString()}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = ordersHTML;
+}
+
+
+        function toggleOrderDetails(orderId) {
+            const detailsElement = document.getElementById(`details-${orderId}`);
+            const button = event.target;
+            
+            if (detailsElement.style.display === 'none' || detailsElement.style.display === '') {
+                detailsElement.style.display = 'block';
+                button.textContent = 'Hide Details';
+            } else {
+                detailsElement.style.display = 'none';
+                button.textContent = 'View Details';
+            }
+        }
+
 
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
@@ -176,6 +438,251 @@
                 window.location.href = 'main.html';
             }
         }
+
+        // Address Management Functions
+        function manageAddress() {
+            // Hide profile content
+            document.getElementById('profile-content').style.display = 'none';
+            
+            // Show addresses content
+            document.getElementById('addresses-content').style.display = 'block';
+            
+            // Load addresses
+            loadUserAddresses();
+        }
+
+        async function loadUserAddresses() {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    document.getElementById('addresses-list').innerHTML = '<div class="empty-state"><p>Please login to manage addresses</p></div>';
+                    return;
+                }
+
+                const response = await fetch('http://localhost:3000/api/addresses', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    displayAddresses(data.data.addresses);
+                } else {
+                    const errorData = await response.json();
+                    document.getElementById('addresses-list').innerHTML = `<div class="error-message"><p>Failed to load addresses: ${errorData.message || 'Unknown error'}</p></div>`;
+                }
+            } catch (error) {
+                console.error('Error loading addresses:', error);
+                document.getElementById('addresses-list').innerHTML = `<div class="error-message"><p>Error loading addresses: ${error.message}</p></div>`;
+            }
+        }
+
+        function displayAddresses(addresses) {
+            const container = document.getElementById('addresses-list');
+            
+            if (!addresses || addresses.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No saved addresses found. Add your first address!</p></div>';
+                return;
+            }
+
+            const addressesHTML = addresses.map(address => `
+                <div class="address-card">
+                    <div class="address-header">
+                        <h4>${address.name} ${address.isDefault ? '<span class="default-badge">Default</span>' : ''}</h4>
+                        <div class="address-actions">
+                            <button class="btn-secondary" onclick="editAddress('${address._id}')">Edit</button>
+                            <button class="btn-danger" onclick="deleteAddress('${address._id}')">Delete</button>
+                            ${!address.isDefault ? `<button class="btn-primary" onclick="setDefaultAddress('${address._id}')">Set Default</button>` : ''}
+                        </div>
+                    </div>
+                    <div class="address-details">
+                        <p><strong>${address.fullName}</strong></p>
+                        <p>${address.address}</p>
+                        <p>${address.city}, ${address.state} ${address.pincode}</p>
+                        <p>Phone: ${address.phone}</p>
+                        <p>Email: ${address.email}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = addressesHTML;
+        }
+
+        function showAddAddressForm() {
+            document.getElementById('address-form-container').style.display = 'block';
+            document.getElementById('address-form-title').textContent = 'Add New Address';
+            document.getElementById('address-form').reset();
+            document.getElementById('address-phone').value = '+91';
+            document.getElementById('address-form').setAttribute('data-address-id', '');
+        }
+
+        function hideAddAddressForm() {
+            document.getElementById('address-form-container').style.display = 'none';
+        }
+
+        function editAddress(addressId) {
+            // Find the address data from the displayed addresses
+            const addressCard = event.target.closest('.address-card');
+            const addressName = addressCard.querySelector('h4').textContent.replace(' Default', '').trim();
+            const addressDetails = addressCard.querySelector('.address-details');
+            
+            // Extract address data from the displayed text
+            const fullName = addressDetails.querySelector('p:first-child strong').textContent;
+            const addressText = addressDetails.querySelector('p:nth-child(2)').textContent;
+            const cityStatePincode = addressDetails.querySelector('p:nth-child(3)').textContent;
+            const phone = addressDetails.querySelector('p:nth-child(4)').textContent.replace('Phone: ', '');
+            const email = addressDetails.querySelector('p:nth-child(5)').textContent.replace('Email: ', '');
+            
+            // Parse city, state, pincode
+            const cityStatePincodeParts = cityStatePincode.split(', ');
+            const city = cityStatePincodeParts[0];
+            const statePincode = cityStatePincodeParts[1].split(' ');
+            const state = statePincode[0];
+            const pincode = statePincode[1];
+            
+            // Fill the form
+            document.getElementById('address-name').value = addressName;
+            document.getElementById('address-fullName').value = fullName;
+            document.getElementById('address-email').value = email;
+            document.getElementById('address-phone').value = phone;
+            document.getElementById('address-address').value = addressText;
+            document.getElementById('address-city').value = city;
+            document.getElementById('address-state').value = state;
+            document.getElementById('address-pincode').value = pincode;
+            document.getElementById('address-isDefault').checked = addressCard.querySelector('.default-badge') !== null;
+            
+            // Show form
+            document.getElementById('address-form-container').style.display = 'block';
+            document.getElementById('address-form-title').textContent = 'Edit Address';
+            document.getElementById('address-form').setAttribute('data-address-id', addressId);
+        }
+
+        async function deleteAddress(addressId) {
+            if (!confirm('Are you sure you want to delete this address?')) {
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`http://localhost:3000/api/addresses/${addressId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Address deleted successfully!');
+                    loadUserAddresses(); // Reload addresses
+                } else {
+                    alert(`Error deleting address: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error deleting address:', error);
+                alert('Error deleting address');
+            }
+        }
+
+        async function setDefaultAddress(addressId) {
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`http://localhost:3000/api/addresses/${addressId}/default`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Default address updated successfully!');
+                    loadUserAddresses(); // Reload addresses
+                } else {
+                    alert(`Error setting default address: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error setting default address:', error);
+                alert('Error setting default address');
+            }
+        }
+
+        // Handle address form submission
+        document.getElementById('address-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const token = localStorage.getItem('authToken');
+                console.log('Token found:', token ? 'Yes' : 'No');
+                
+                if (!token) {
+                    alert('Please login to save addresses');
+                    return;
+                }
+
+                const formData = new FormData(this);
+                const addressData = {
+                    name: formData.get('name'),
+                    fullName: formData.get('fullName'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    address: formData.get('address'),
+                    city: formData.get('city'),
+                    state: formData.get('state'),
+                    pincode: formData.get('pincode'),
+                    isDefault: formData.get('isDefault') === 'on'
+                };
+
+                console.log('Address data to send:', addressData);
+
+                const addressId = this.getAttribute('data-address-id');
+                const isEdit = addressId && addressId !== '';
+
+                const url = isEdit ? `http://localhost:3000/api/addresses/${addressId}` : 'http://localhost:3000/api/addresses';
+                const method = isEdit ? 'PUT' : 'POST';
+
+                console.log('Making request to:', url, 'with method:', method);
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(addressData)
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                if (data.success) {
+                    alert(isEdit ? 'Address updated successfully!' : 'Address saved successfully!');
+                    hideAddAddressForm();
+                    loadUserAddresses(); // Reload addresses
+                } else {
+                    // Handle validation errors
+                    if (data.errors && Array.isArray(data.errors)) {
+                        const errorMessages = data.errors.map(err => err.msg || err.message).join('\n');
+                        alert(`Validation Error:\n${errorMessages}`);
+                    } else {
+                        alert(`Error ${isEdit ? 'updating' : 'saving'} address: ${data.message}`);
+                    }
+                }
+            } catch (error) {
+                console.error('Error saving address:', error);
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    alert('Network error: Unable to connect to server. Please check if the server is running.');
+                } else {
+                    alert(`Error saving address: ${error.message}`);
+                }
+            }
+        });
     </script>
 </body>
 </html>

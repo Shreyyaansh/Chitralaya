@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Chitralaya</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="admin-logo">
+                <h2>🎨 Admin Panel</h2>
+            </div>
+            <nav class="admin-nav">
+                <a href="#" class="nav-item active" data-section="dashboard">
+                    📊 Dashboard
+                </a>
+                <a href="#" class="nav-item" data-section="products">
+                    🖼️ Products
+                </a>
+                <a href="#" class="nav-item" data-section="orders">
+                    📦 Orders
+                </a>
+                <a href="#" class="nav-item" data-section="users">
+                    👥 Users
+                </a>
+            </nav>
+            <div class="admin-footer">
+                <a href="main.html" class="back-btn">← Back to Site</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="admin-header">
+                <h1 id="page-title">Dashboard</h1>
+                <div class="admin-actions">
+                    <button id="refresh-btn" class="btn-primary">Refresh</button>
+                    <button id="logout-btn" class="btn-secondary">Logout</button>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Products</h3>
+                        <div class="stat-number" id="total-products">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Orders</h3>
+                        <div class="stat-number" id="total-orders">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Users</h3>
+                        <div class="stat-number" id="total-users">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Revenue</h3>
+                        <div class="stat-number" id="total-revenue">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Paid Orders</h3>
+                        <div class="stat-number" id="paid-orders">-</div>
+                    </div>
+                </div>
+                <div class="recent-orders">
+                    <h3>Recent Orders</h3>
+                    <div id="recent-orders-list" class="orders-list">
+                        <!-- Recent orders will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Products Section -->
+            <section id="products" class="content-section">
+                <div class="section-header">
+                    <h2>Product Management</h2>
+                    <button id="add-product-btn" class="btn-primary">Add New Product</button>
+                </div>
+                <div class="products-grid" id="products-grid">
+                    <!-- Products will be loaded here -->
+                </div>
+            </section>
+
+
+            <!-- Orders Section -->
+            <section id="orders" class="content-section">
+                <div class="section-header">
+                    <h2>Order Management</h2>
+                    <div class="order-filters">
+                        <select id="order-status-filter">
+                            <option value="">All Orders</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="orders-table" id="orders-table">
+                    <!-- Orders will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="users" class="content-section">
+                <div class="section-header">
+                    <h2>User Management</h2>
+                </div>
+                <div class="users-table" id="users-table">
+                    <!-- Users will be loaded here -->
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div id="add-product-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Product</h3>
+                <span class="close">&times;</span>
+            </div>
+            <form id="add-product-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-name">Product Name *</label>
+                        <input type="text" id="product-name" name="name" required placeholder="e.g., Divine Krishna Portrait">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-price">Price (₹) *</label>
+                        <input type="number" id="product-price" name="price" step="0.01" required placeholder="1500.00">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-description">Description *</label>
+                    <textarea id="product-description" name="description" required placeholder="Describe the artwork, its inspiration, and unique features..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-category">Category *</label>
+                        <select id="product-category" name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="canvas">Canvas</option>
+                            <option value="sketches">Sketches</option>
+                            <option value="color">Water Color</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-artist">Artist Name</label>
+                        <input type="text" id="product-artist" name="artist" placeholder="e.g., Chitralaya Artist">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-size">Size (Optional)</label>
+                        <input type="text" id="product-size" name="size" placeholder="e.g., 12x16 inches, A4">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-medium">Medium (Optional)</label>
+                        <input type="text" id="product-medium" name="medium" placeholder="e.g., Oil on Canvas, Watercolor">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-main-image">Main Image *</label>
+                    <input type="file" id="product-main-image" name="mainImage" accept="image/*" required>
+                    <small class="form-help">This will be the primary image shown on the product card</small>
+                    <div id="main-image-preview" class="image-preview"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-hover-image">Hover Image (Optional)</label>
+                    <input type="file" id="product-hover-image" name="hoverImage" accept="image/*">
+                    <small class="form-help">This image will show when user hovers over the product card</small>
+                    <div id="hover-image-preview" class="image-preview"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-additional-images">Additional Images (Optional)</label>
+                    <input type="file" id="product-additional-images" name="additionalImages" accept="image/*" multiple>
+                    <small class="form-help">Select multiple images for additional product views</small>
+                    <div id="additional-images-preview" class="image-preview"></div>
+                </div>
+
+                <!-- Simple Image Positioning -->
+                <div class="form-group">
+                    <label for="product-image-position">Image Position</label>
+                    <div class="positioning-controls">
+                        <select id="product-image-position" name="imagePosition" onchange="updateAddPositionInput()">
+                            <option value="center">Center (Default)</option>
+                            <option value="center -20px">Move Up 20px</option>
+                            <option value="center -30px">Move Up 30px</option>
+                            <option value="center -40px">Move Up 40px</option>
+                            <option value="center -50px">Move Up 50px</option>
+                            <option value="center -60px">Move Up 60px</option>
+                            <option value="center -70px">Move Up 70px</option>
+                            <option value="center -80px">Move Up 80px</option>
+                            <option value="center -100px">Move Up 100px</option>
+                            <option value="center 20px">Move Down 20px</option>
+                            <option value="center 30px">Move Down 30px</option>
+                            <option value="custom">Custom (Enter below)</option>
+                        </select>
+                        <input type="text" id="add-custom-position" placeholder="e.g., center -45px" style="margin-top: 8px; display: none;" onchange="updateAddPositionFromInput()">
+                        <small class="form-help">Choose from dropdown or select "Custom" to enter your own pixel value</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-is-active">Product Status</label>
+                    <select id="product-is-active" name="isActive">
+                        <option value="true">Active (Visible to customers)</option>
+                        <option value="false">Inactive (Hidden from customers)</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancel-product">Cancel</button>
+                    <button type="submit" class="btn-primary">Add Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div id="edit-product-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Product</h3>
+                <span class="close" onclick="hideEditProductModal()">&times;</span>
+            </div>
+            <form id="edit-product-form">
+                <input type="hidden" id="edit-product-id" name="id">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-product-name">Product Name *</label>
+                        <input type="text" id="edit-product-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-product-price">Price (₹) *</label>
+                        <input type="number" id="edit-product-price" name="price" step="0.01" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-product-description">Description *</label>
+                    <textarea id="edit-product-description" name="description" required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-product-category">Category *</label>
+                        <select id="edit-product-category" name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="canvas">Canvas</option>
+                            <option value="sketches">Sketches</option>
+                            <option value="color">Water Color</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-product-artist">Artist Name</label>
+                        <input type="text" id="edit-product-artist" name="artist">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-product-size">Size (Optional)</label>
+                        <input type="text" id="edit-product-size" name="size">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-product-medium">Medium (Optional)</label>
+                        <input type="text" id="edit-product-medium" name="medium">
+                    </div>
+                </div>
+
+                <!-- Simple Image Positioning -->
+                <div class="form-group">
+                    <label for="edit-product-image-position">Image Position</label>
+                    <div class="positioning-controls">
+                        <select id="edit-product-image-position" name="imagePosition" onchange="updatePositionInput()">
+                            <option value="center">Center (Default)</option>
+                            <option value="center -20px">Move Up 20px</option>
+                            <option value="center -30px">Move Up 30px</option>
+                            <option value="center -40px">Move Up 40px</option>
+                            <option value="center -50px">Move Up 50px</option>
+                            <option value="center -60px">Move Up 60px</option>
+                            <option value="center -70px">Move Up 70px</option>
+                            <option value="center -80px">Move Up 80px</option>
+                            <option value="center -100px">Move Up 100px</option>
+                            <option value="center 20px">Move Down 20px</option>
+                            <option value="center 30px">Move Down 30px</option>
+                            <option value="custom">Custom (Enter below)</option>
+                        </select>
+                        <input type="text" id="edit-custom-position" placeholder="e.g., center -45px" style="margin-top: 8px; display: none;" onchange="updatePositionFromInput()">
+                        <small class="form-help">Choose from dropdown or select "Custom" to enter your own pixel value</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-product-is-active">Product Status</label>
+                    <select id="edit-product-is-active" name="isActive">
+                        <option value="true">Active (Visible to customers)</option>
+                        <option value="false">Inactive (Hidden from customers)</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="hideEditProductModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Update Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div id="order-details-modal" class="modal">
+        <div class="modal-content order-details-modal">
+            <div class="modal-header">
+                <h3>Order Details</h3>
+                <span class="close" onclick="hideOrderDetailsModal()">&times;</span>
+            </div>
+            <div id="order-details-content">
+                <!-- Order details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
