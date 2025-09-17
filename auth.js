@@ -1,5 +1,5 @@
 // Authentication JavaScript
-const API_BASE_URL = 'http://localhost:3000/api';
+// API Configuration (loaded from config.js)
 
 document.addEventListener('DOMContentLoaded', function() {
     const signupForm = document.getElementById('signup-form');

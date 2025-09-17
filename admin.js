@@ -1,5 +1,5 @@
 // Admin Panel JavaScript
-const API_BASE_URL = 'http://localhost:3000/api';
+// API Configuration (loaded from config.js)
 
 // Global variables
 let currentSection = 'dashboard';

@@ -1,0 +1,18 @@
+{
+  "name": "chitralaya-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for Chitralaya art gallery",
+  "main": "main.html",
+  "scripts": {
+    "build": "echo 'Frontend build complete'",
+    "start": "echo 'Frontend ready'"
+  },
+  "keywords": [
+    "art",
+    "gallery",
+    "frontend",
+    "static"
+  ],
+  "author": "Chitralaya",
+  "license": "MIT"
+}

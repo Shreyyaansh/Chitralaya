@@ -10,6 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari&family=Playfair+Display&display=swap"
       rel="stylesheet"/>
     <link rel="stylesheet" href="chitra.css" />
+    <script src="config.js"></script>
     <script src="script.js"></script>
     <script>
       // Hidden admin access - press Ctrl+Shift+A to access admin panel
@@ -116,8 +117,7 @@
   </footer>
 
   <script>
-    // API Configuration
-    const API_BASE_URL = 'http://localhost:3000/api';
+    // API Configuration (now loaded from config.js)
     let allProducts = [];
     let currentFilter = 'all';
 
