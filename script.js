@@ -373,4 +373,6 @@
     console.error('Unhandled promise rejection:', e.reason);
     // In production, you might want to send this to an error reporting service
   });
+
+  }); // Close the main window.onload function
  
