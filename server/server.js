@@ -66,20 +66,27 @@ const backendUrl = process.env.BACKEND_URL;
 
 app.use(cors({
   origin: function (origin, callback) {
+    console.log('CORS request from origin:', origin);
+    console.log('Allowed origins:', allowedOrigins);
+    console.log('Backend URL:', backendUrl);
+    
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
     // Allow Vercel domains automatically (for both frontend and backend)
     if (origin.includes('.vercel.app')) {
+      console.log('Allowing Vercel domain:', origin);
       return callback(null, true);
     }
     
     // Allow backend URL if specified
     if (backendUrl && origin === backendUrl) {
+      console.log('Allowing backend URL:', origin);
       return callback(null, true);
     }
     
     if (allowedOrigins.indexOf(origin) !== -1) {
+      console.log('Allowing configured origin:', origin);
       callback(null, true);
     } else {
       console.log('CORS blocked origin:', origin);

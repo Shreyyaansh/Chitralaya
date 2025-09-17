@@ -141,10 +141,13 @@
         const userLink = document.getElementById('user-link');
         const userText = document.getElementById('user-text');
         
+        console.log('Checking user status...', { token: token ? 'exists' : 'missing', apiUrl: window.API_BASE_URL });
+        
         if (token) {
           try {
             // Verify token with server
-            const response = await fetch('${window.API_BASE_URL}/auth/profile', {
+            console.log('Making request to:', `${window.API_BASE_URL}/auth/profile`);
+            const response = await fetch(`${window.API_BASE_URL}/auth/profile`, {
               method: 'GET',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -152,7 +155,9 @@
               }
             });
 
+            console.log('Response status:', response.status);
             const data = await response.json();
+            console.log('Response data:', data);
 
             if (data.success) {
               const user = data.data.user;
@@ -235,7 +240,7 @@
           try {
             // Call logout API
             const token = localStorage.getItem('authToken');
-            await fetch('${window.API_BASE_URL}/auth/logout', {
+            await fetch(`${window.API_BASE_URL}/auth/logout`, {
               method: 'POST',
               headers: {
                 'Authorization': `Bearer ${token}`,
