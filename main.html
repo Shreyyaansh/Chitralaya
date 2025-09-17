@@ -5,13 +5,31 @@
     <!-- Page text uses UTF-8 encoding (so Devanagari and emoji render correctly). -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- makes th layout nice on mobile devices. -->
-    <title>Chitralaya</title>
+    <title>Chitralaya - Art Gallery & Online Store</title>
+    <meta name="description" content="Chitralaya - Premium art gallery featuring canvas paintings, sketches, and color artworks. Buy authentic Indian art online.">
+    <meta name="keywords" content="art gallery, paintings, sketches, canvas art, Indian art, online art store">
+    <meta name="author" content="Chitralaya">
+    <link rel="canonical" href="https://chitralaya.vercel.app">
+    <meta property="og:title" content="Chitralaya - Art Gallery & Online Store">
+    <meta property="og:description" content="Premium art gallery featuring canvas paintings, sketches, and color artworks. Buy authentic Indian art online.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://chitralaya.vercel.app">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Chitralaya - Art Gallery & Online Store">
+    <meta name="twitter:description" content="Premium art gallery featuring canvas paintings, sketches, and color artworks.">
     <link
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari&family=Playfair+Display&display=swap"
-      rel="stylesheet"/>
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"/>
+    <noscript><link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari&family=Playfair+Display&display=swap"
+      rel="stylesheet"/></noscript>
     <link rel="stylesheet" href="chitra.css" />
+    <link rel="preload" href="script.js" as="script">
+    <link rel="preload" href="config.js" as="script">
     <script src="config.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
     <script>
       // Hidden admin access - press Ctrl+Shift+A to access admin panel
       document.addEventListener('DOMContentLoaded', function() {

@@ -18,6 +18,12 @@
         
         // Initialize product page functionality
         initProductPage();
+        
+        // Initialize lazy loading for images
+        initLazyLoading();
+        
+        // Initialize performance monitoring
+        initPerformanceMonitoring();
       };
 
       // Spotlight effect for banner
@@ -286,4 +292,80 @@
     window.addEventListener('cartUpdated', function() {
       updateCartCounter();
     });
+  }
+
+  // Lazy loading for images
+  function initLazyLoading() {
+    if ('IntersectionObserver' in window) {
+      const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img.dataset.src) {
+              img.src = img.dataset.src;
+              img.classList.remove('lazy');
+              imageObserver.unobserve(img);
+            }
+          }
+        });
+      });
+
+      // Observe all images with data-src attribute
+      document.querySelectorAll('img[data-src]').forEach(img => {
+        imageObserver.observe(img);
+      });
+    } else {
+      // Fallback for browsers without IntersectionObserver
+      document.querySelectorAll('img[data-src]').forEach(img => {
+        img.src = img.dataset.src;
+        img.classList.remove('lazy');
+      });
+    }
+  }
+
+  // Performance monitoring
+  function initPerformanceMonitoring() {
+    // Monitor Core Web Vitals
+    if ('PerformanceObserver' in window) {
+      // Largest Contentful Paint
+      new PerformanceObserver((entryList) => {
+        for (const entry of entryList.getEntries()) {
+          console.log('LCP:', entry.startTime);
+        }
+      }).observe({ entryTypes: ['largest-contentful-paint'] });
+
+      // First Input Delay
+      new PerformanceObserver((entryList) => {
+        for (const entry of entryList.getEntries()) {
+          console.log('FID:', entry.processingStart - entry.startTime);
+        }
+      }).observe({ entryTypes: ['first-input'] });
+
+      // Cumulative Layout Shift
+      new PerformanceObserver((entryList) => {
+        for (const entry of entryList.getEntries()) {
+          if (!entry.hadRecentInput) {
+            console.log('CLS:', entry.value);
+          }
+        }
+      }).observe({ entryTypes: ['layout-shift'] });
+    }
+
+    // Log page load time
+    window.addEventListener('load', () => {
+      const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+      console.log('Page load time:', loadTime + 'ms');
+    });
+  }
+
+  // Error handling and reporting
+  window.addEventListener('error', function(e) {
+    console.error('JavaScript error:', e.error);
+    // In production, you might want to send this to an error reporting service
+  });
+
+  window.addEventListener('unhandledrejection', function(e) {
+    console.error('Unhandled promise rejection:', e.reason);
+    // In production, you might want to send this to an error reporting service
+  });
  
