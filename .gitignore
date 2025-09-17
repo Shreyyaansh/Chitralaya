@@ -9,6 +9,8 @@ server/node_modules/
 server/.env
 server/.env.local
 server/.env.production
+server/config.env
+config.env
 
 # Logs
 *.log

@@ -2,6 +2,10 @@
   "version": 2,
   "builds": [
     {
+      "src": "server/server.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "*.html",
       "use": "@vercel/static"
     },
@@ -18,42 +22,38 @@
       "use": "@vercel/static"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/",
-      "dest": "/main.html"
+      "source": "/api/(.*)",
+      "destination": "/server/server.js"
     },
     {
-      "src": "/admin",
-      "dest": "/admin.html"
+      "source": "/",
+      "destination": "/main.html"
     },
     {
-      "src": "/login",
-      "dest": "/login.html"
+      "source": "/admin",
+      "destination": "/admin.html"
     },
     {
-      "src": "/cart",
-      "dest": "/cart.html"
+      "source": "/login",
+      "destination": "/login.html"
     },
     {
-      "src": "/checkout",
-      "dest": "/checkout.html"
+      "source": "/cart",
+      "destination": "/cart.html"
     },
     {
-      "src": "/profile",
-      "dest": "/profile.html"
+      "source": "/checkout",
+      "destination": "/checkout.html"
     },
     {
-      "src": "/product",
-      "dest": "/product.html"
+      "source": "/profile",
+      "destination": "/profile.html"
     },
     {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/product",
+      "destination": "/product.html"
     }
   ],
   "headers": [

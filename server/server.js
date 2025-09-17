@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const path = require('path');
 require('dotenv').config({ path: './config.env' });
 
 const connectDB = require('./config/database');
@@ -72,7 +73,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/razorpay', razorpayRoutes);
 
 // Serve static files (for both development and production)
-app.use(express.static('../'));
+app.use(express.static(path.join(__dirname, '..')));
 
 // Serve the main HTML file for any non-API routes (for production)
 if (process.env.NODE_ENV === 'production') {
