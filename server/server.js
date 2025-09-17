@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
-require('dotenv').config({ path: './config.env' });
+require('dotenv').config({ path: path.join(__dirname, 'config.env') });
 
 const connectDB = require('./config/database');
 const authRoutes = require('./routes/auth');
@@ -103,6 +103,17 @@ app.use(express.urlencoded({
   extended: true, 
   limit: process.env.NODE_ENV === 'production' ? '5mb' : '10mb' 
 }));
+
+// Root endpoint for basic server check
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Chitralaya Backend API is running',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV,
+    version: '1.0.0'
+  });
+});
 
 // Health check endpoint with detailed status
 app.get('/health', (req, res) => {
