@@ -263,11 +263,11 @@
             userLink.href = 'login.html';
             userLink.onclick = null;
             alert('You have been logged out successfully!');
+          }
         }
       }
-    }
 
-    // Update cart counter
+      // Update cart counter
     function updateCartCounter() {
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
       const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -366,18 +366,21 @@
       console.log('Page load time:', loadTime + 'ms');
     });
   }
+  
+  // Initialize performance monitoring
+  initPerformanceMonitoring();
 
-  // Error handling and reporting
-  window.addEventListener('error', function(e) {
-    console.error('JavaScript error:', e.error);
-    // In production, you might want to send this to an error reporting service
-  });
+ // End of window.onload function
 
-  window.addEventListener('unhandledrejection', function(e) {
-    console.error('Unhandled promise rejection:', e.reason);
-    // In production, you might want to send this to an error reporting service
-  });
+// Error handling and reporting
+window.addEventListener('error', function(e) {
+  console.error('JavaScript error:', e.error);
+  // In production, you might want to send this to an error reporting service
+});
 
-// Close the main window.onload function
+window.addEventListener('unhandledrejection', function(e) {
+  console.error('Unhandled promise rejection:', e.reason);
+  // In production, you might want to send this to an error reporting service
+});
 
 // End of script

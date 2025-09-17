@@ -821,7 +821,7 @@
             try {
                 
                 // First create the order in our database
-                const response = await fetch(`${window.API_BASE_URL}/orders', {
+                const response = await fetch(`${window.API_BASE_URL}/orders`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -868,7 +868,7 @@
                     };
                     
                     
-                    const razorpayResponse = await fetch(`${window.API_BASE_URL}/razorpay/create-order', {
+                    const razorpayResponse = await fetch(`${window.API_BASE_URL}/razorpay/create-order`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -885,7 +885,7 @@
                     
                     if (razorpayData.success) {
                         // Get Razorpay key
-                        const keyResponse = await fetch(`${window.API_BASE_URL}/razorpay/key', {
+                        const keyResponse = await fetch(`${window.API_BASE_URL}/razorpay/key`, {
                             headers: {
                                 'Authorization': `Bearer ${token}`
                             }
@@ -957,7 +957,7 @@
         async function handleOtherPayment(orderData, token, submitBtn, originalText) {
             try {
                 // Create order via API
-                const response = await fetch(`${window.API_BASE_URL}/orders', {
+                const response = await fetch(`${window.API_BASE_URL}/orders`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1153,7 +1153,7 @@
                 }
 
                 // Check if this address already exists
-                const existingAddressesResponse = await fetch(`${window.API_BASE_URL}/addresses', {
+                const existingAddressesResponse = await fetch(`${window.API_BASE_URL}/addresses`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1194,7 +1194,7 @@
                     isDefault: addressCount === 0 // First address becomes default
                 };
 
-                const response = await fetch(`${window.API_BASE_URL}/addresses', {
+                const response = await fetch(`${window.API_BASE_URL}/addresses`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1221,7 +1221,7 @@
                 }
 
                 // Check if this address already exists
-                const existingAddresses = await fetch(`${window.API_BASE_URL}/addresses', {
+                const existingAddresses = await fetch(`${window.API_BASE_URL}/addresses`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1261,7 +1261,7 @@
                     isDefault: addressCount === 0 // First address becomes default
                 };
 
-                const response = await fetch(`${window.API_BASE_URL}/addresses', {
+                const response = await fetch(`${window.API_BASE_URL}/addresses`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
