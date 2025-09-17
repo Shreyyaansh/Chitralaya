@@ -224,7 +224,7 @@
 
             try {
                 // Load user profile data
-                const response = await fetch('http://localhost:3000/api/auth/profile', {
+                const response = await fetch(`${window.API_BASE_URL}/auth/profile`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -288,8 +288,8 @@
                     return;
                 }
 
-                console.log('Fetching orders from http://localhost:3000/api/orders...');
-                const response = await fetch('http://localhost:3000/api/orders', {
+                console.log('Fetching orders from API...');
+                const response = await fetch(`${window.API_BASE_URL}/orders`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -459,7 +459,7 @@
                     return;
                 }
 
-                const response = await fetch('http://localhost:3000/api/addresses', {
+                const response = await fetch(`${window.API_BASE_URL}/addresses`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -565,7 +565,7 @@
 
             try {
                 const token = localStorage.getItem('authToken');
-                const response = await fetch(`http://localhost:3000/api/addresses/${addressId}`, {
+                const response = await fetch(`${window.API_BASE_URL}/addresses/${addressId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -589,7 +589,7 @@
         async function setDefaultAddress(addressId) {
             try {
                 const token = localStorage.getItem('authToken');
-                const response = await fetch(`http://localhost:3000/api/addresses/${addressId}/default`, {
+                const response = await fetch(`${window.API_BASE_URL}/addresses/${addressId}/default`, {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -641,7 +641,7 @@
                 const addressId = this.getAttribute('data-address-id');
                 const isEdit = addressId && addressId !== '';
 
-                const url = isEdit ? `http://localhost:3000/api/addresses/${addressId}` : 'http://localhost:3000/api/addresses';
+                const url = isEdit ? `${window.API_BASE_URL}/addresses/${addressId}` : `${window.API_BASE_URL}/addresses`;
                 const method = isEdit ? 'PUT' : 'POST';
 
                 console.log('Making request to:', url, 'with method:', method);

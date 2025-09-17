@@ -771,7 +771,7 @@
             try {
                 
                 // Verify payment with backend
-                const response = await fetch('http://localhost:3000/api/razorpay/verify-payment', {
+                const response = await fetch('${window.API_BASE_URL}/razorpay/verify-payment', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -813,7 +813,7 @@
             try {
                 
                 // First create the order in our database
-                const response = await fetch('http://localhost:3000/api/orders', {
+                const response = await fetch('${window.API_BASE_URL}/orders', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -860,7 +860,7 @@
                     };
                     
                     
-                    const razorpayResponse = await fetch('http://localhost:3000/api/razorpay/create-order', {
+                    const razorpayResponse = await fetch('${window.API_BASE_URL}/razorpay/create-order', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -877,7 +877,7 @@
                     
                     if (razorpayData.success) {
                         // Get Razorpay key
-                        const keyResponse = await fetch('http://localhost:3000/api/razorpay/key', {
+                        const keyResponse = await fetch('${window.API_BASE_URL}/razorpay/key', {
                             headers: {
                                 'Authorization': `Bearer ${token}`
                             }
@@ -949,7 +949,7 @@
         async function handleOtherPayment(orderData, token, submitBtn, originalText) {
             try {
                 // Create order via API
-                const response = await fetch('http://localhost:3000/api/orders', {
+                const response = await fetch('${window.API_BASE_URL}/orders', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1012,7 +1012,7 @@
                     return;
                 }
 
-                const response = await fetch('http://localhost:3000/api/addresses', {
+                const response = await fetch('${window.API_BASE_URL}/addresses', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1104,7 +1104,7 @@
         async function fetchAddressDetails(addressId) {
             try {
                 const token = localStorage.getItem('authToken');
-                const response = await fetch(`http://localhost:3000/api/addresses/${addressId}`, {
+                const response = await fetch(`${window.API_BASE_URL}/addresses/${addressId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1145,7 +1145,7 @@
                 }
 
                 // Check if this address already exists
-                const existingAddressesResponse = await fetch('http://localhost:3000/api/addresses', {
+                const existingAddressesResponse = await fetch('${window.API_BASE_URL}/addresses', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1186,7 +1186,7 @@
                     isDefault: addressCount === 0 // First address becomes default
                 };
 
-                const response = await fetch('http://localhost:3000/api/addresses', {
+                const response = await fetch('${window.API_BASE_URL}/addresses', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1213,7 +1213,7 @@
                 }
 
                 // Check if this address already exists
-                const existingAddresses = await fetch('http://localhost:3000/api/addresses', {
+                const existingAddresses = await fetch('${window.API_BASE_URL}/addresses', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1253,7 +1253,7 @@
                     isDefault: addressCount === 0 // First address becomes default
                 };
 
-                const response = await fetch('http://localhost:3000/api/addresses', {
+                const response = await fetch('${window.API_BASE_URL}/addresses', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

@@ -144,7 +144,7 @@
         if (token) {
           try {
             // Verify token with server
-            const response = await fetch('http://localhost:3000/api/auth/profile', {
+            const response = await fetch('${window.API_BASE_URL}/auth/profile', {
               method: 'GET',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -235,7 +235,7 @@
           try {
             // Call logout API
             const token = localStorage.getItem('authToken');
-            await fetch('http://localhost:3000/api/auth/logout', {
+            await fetch('${window.API_BASE_URL}/auth/logout', {
               method: 'POST',
               headers: {
                 'Authorization': `Bearer ${token}`,

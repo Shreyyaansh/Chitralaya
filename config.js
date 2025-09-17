@@ -1,7 +1,7 @@
 // API Configuration for different environments
 const API_CONFIG = {
   development: 'http://localhost:3000/api',
-  production: '/api' // For single Vercel deployment, API routes are at /api
+  production: 'https://chitralaya-backend.vercel.app/api' // Your actual backend URL
 };
 
 // Get current environment
