@@ -220,6 +220,11 @@
     <script>
         // Checkout page specific JavaScript
         document.addEventListener('DOMContentLoaded', function() {
+            // Check user login status for header button
+            if (typeof checkUserStatus === 'function') {
+                checkUserStatus();
+            }
+            
             checkLoginAndCart();
             updateCartCounter();
             
@@ -976,12 +981,23 @@
                     const savedAddressSelect = document.getElementById('savedAddresses');
                     const saveAddressCheckbox = document.getElementById('saveAddress');
                     
+                    console.log('Address saving logic:', {
+                        checkboxExists: !!saveAddressCheckbox,
+                        checkboxChecked: saveAddressCheckbox ? saveAddressCheckbox.checked : false,
+                        savedAddressSelectValue: savedAddressSelect ? savedAddressSelect.value : 'null',
+                        shippingAddress: orderData.shippingAddress
+                    });
+                    
                     if (saveAddressCheckbox && saveAddressCheckbox.checked) {
                         // User explicitly wants to save this address
+                        console.log('Saving address because checkbox is checked');
                         await saveAddressFromCheckout(orderData.shippingAddress);
                     } else if (!savedAddressSelect.value || savedAddressSelect.value === 'new') {
                         // Auto-save the address if it's not from a saved address (existing behavior)
+                        console.log('Auto-saving address because no saved address was used');
                         await autoSaveAddressFromOrder(orderData.shippingAddress);
+                    } else {
+                        console.log('Not saving address - using saved address');
                     }
                     
                     // Order created successfully
@@ -1036,26 +1052,32 @@
                         document.getElementById('address-input-fields').style.display = 'none';
                         document.getElementById('save-address-group').style.display = 'none';
                     } else {
-                        // Even with no saved addresses, show the dropdown with "Use New Address" option
+                        // When no saved addresses exist, show the form fields and save checkbox
                         populateSavedAddressesDropdown([]);
                         document.getElementById('saved-addresses-section').style.display = 'block';
-                        document.getElementById('address-input-fields').style.display = 'none';
-                        document.getElementById('save-address-group').style.display = 'none';
+                        document.getElementById('address-input-fields').style.display = 'block';
+                        document.getElementById('save-address-group').style.display = 'block';
+                        // Auto-select "Use New Address" option
+                        document.getElementById('savedAddresses').value = 'new';
                     }
                 } else {
-                    // Even with error, show the dropdown with "Use New Address" option
+                    // Even with error, show the form fields and save checkbox
                     populateSavedAddressesDropdown([]);
                     document.getElementById('saved-addresses-section').style.display = 'block';
-                    document.getElementById('address-input-fields').style.display = 'none';
-                    document.getElementById('save-address-group').style.display = 'none';
+                    document.getElementById('address-input-fields').style.display = 'block';
+                    document.getElementById('save-address-group').style.display = 'block';
+                    // Auto-select "Use New Address" option
+                    document.getElementById('savedAddresses').value = 'new';
                 }
             } catch (error) {
                 console.error('Error loading saved addresses:', error);
-                // Even with error, show the dropdown with "Use New Address" option
+                // Even with error, show the form fields and save checkbox
                 populateSavedAddressesDropdown([]);
                 document.getElementById('saved-addresses-section').style.display = 'block';
-                document.getElementById('address-input-fields').style.display = 'none';
-                document.getElementById('save-address-group').style.display = 'none';
+                document.getElementById('address-input-fields').style.display = 'block';
+                document.getElementById('save-address-group').style.display = 'block';
+                // Auto-select "Use New Address" option
+                document.getElementById('savedAddresses').value = 'new';
             }
         }
 
@@ -1147,8 +1169,10 @@
 
         async function saveAddressFromCheckout(shippingAddress) {
             try {
+                console.log('saveAddressFromCheckout called with:', shippingAddress);
                 const token = localStorage.getItem('authToken');
                 if (!token) {
+                    console.log('No auth token found, skipping address save');
                     return; // User not logged in, skip saving
                 }
 
@@ -1194,6 +1218,8 @@
                     isDefault: addressCount === 0 // First address becomes default
                 };
 
+                console.log('Sending address data to server:', addressData);
+
                 const response = await fetch(`${window.API_BASE_URL}/addresses`, {
                     method: 'POST',
                     headers: {
@@ -1204,8 +1230,29 @@
                 });
 
                 if (response.ok) {
+                    console.log('Address saved successfully');
+                    // Show success message to user
+                    const successMessage = document.createElement('div');
+                    successMessage.className = 'success-message';
+                    successMessage.textContent = 'Address saved successfully!';
+                    successMessage.style.cssText = 'background: #d4edda; color: #155724; padding: 10px; margin: 10px 0; border-radius: 4px; border: 1px solid #c3e6cb;';
+                    
+                    // Insert the message before the form
+                    const form = document.getElementById('checkout-form');
+                    form.parentNode.insertBefore(successMessage, form);
+                    
+                    // Remove the message after 3 seconds
+                    setTimeout(() => {
+                        if (successMessage.parentNode) {
+                            successMessage.parentNode.removeChild(successMessage);
+                        }
+                    }, 3000);
+                    
                     // Reload the saved addresses to update the dropdown
                     loadSavedAddresses();
+                } else {
+                    const errorData = await response.json();
+                    console.error('Failed to save address:', errorData.message);
                 }
             } catch (error) {
                 console.error('Error saving address from checkout:', error);

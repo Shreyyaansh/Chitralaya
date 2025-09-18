@@ -209,6 +209,11 @@
     <script>
         // Profile page specific JavaScript
         document.addEventListener('DOMContentLoaded', function() {
+            // Check user login status for header button
+            if (typeof checkUserStatus === 'function') {
+                checkUserStatus();
+            }
+            
             loadProfileData();
         });
 

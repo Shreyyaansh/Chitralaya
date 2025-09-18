@@ -147,6 +147,10 @@
         
         if (data.success) {
           allProducts = data.data.products;
+          
+          // Preload first few critical images
+          preloadCriticalImages(allProducts.slice(0, 6));
+          
           displayProducts(allProducts);
           hideLoadingMessage();
         } else {
@@ -158,6 +162,19 @@
       }
     }
 
+    // Preload critical images for better performance
+    function preloadCriticalImages(products) {
+      products.forEach(product => {
+        if (product.images && product.images[0]) {
+          const link = document.createElement('link');
+          link.rel = 'preload';
+          link.as = 'image';
+          link.href = product.images[0];
+          document.head.appendChild(link);
+        }
+      });
+    }
+
     // Display products in the gallery
     function displayProducts(products) {
       const gallery = document.getElementById('products-gallery');
@@ -167,6 +184,9 @@
         const productElement = createProductElement(product, index);
         gallery.appendChild(productElement);
       });
+
+      // Re-initialize lazy loading for new images
+      initLazyLoading();
     }
 
     // Product mapping to preserve original styling
@@ -206,11 +226,26 @@
       // Use original image paths as they were working before
       const mainImage = product.images[0];
       const hoverImage = product.images[1] || product.images[0];
+      
+      // Generate optimized image URLs using the ImageOptimizer
+      const optimizer = new ImageOptimizer();
+      const getOptimizedImageUrl = (imagePath) => {
+        if (!imagePath) return '';
+        return optimizer.getOptimizedUrl(imagePath, {
+          width: 400,
+          height: 400,
+          quality: 80,
+          format: 'webp'
+        });
+      };
 
       div.innerHTML = `
         <div class="artwork-image ${styleInfo.adjustClass}">
-          <img src="${mainImage}" alt="${product.name}" class="main-img" style="object-position: ${product.imagePosition || 'center'};">
-          <img src="${hoverImage}" alt="${product.name} Detail" class="hover-img" style="object-position: ${product.imagePosition || 'center'};">
+          <div class="image-placeholder">
+            <div class="skeleton-loader"></div>
+          </div>
+          <img data-src="${getOptimizedImageUrl(mainImage)}" alt="${product.name}" class="main-img lazy" style="object-position: ${product.imagePosition || 'center'};" loading="lazy" width="400" height="400">
+          <img data-src="${getOptimizedImageUrl(hoverImage)}" alt="${product.name} Detail" class="hover-img lazy" style="object-position: ${product.imagePosition || 'center'};" loading="lazy" width="400" height="400">
         </div>
         <div class="artwork-info">
           <h3 class="artwork-title">${product.name}</h3>
@@ -296,6 +331,8 @@
       });
     });
   </script>
+  <script src="image-optimizer.js"></script>
+  <script src="config.js"></script>
      
   </body>
 </html>

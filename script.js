@@ -303,7 +303,7 @@
       updateCartCounter();
     });
 
-  // Lazy loading for images
+  // Enhanced lazy loading for images
   function initLazyLoading() {
     if ('IntersectionObserver' in window) {
       const imageObserver = new IntersectionObserver((entries, observer) => {
@@ -311,12 +311,39 @@
           if (entry.isIntersecting) {
             const img = entry.target;
             if (img.dataset.src) {
-              img.src = img.dataset.src;
-              img.classList.remove('lazy');
+              // Create a new image to preload
+              const newImg = new Image();
+              newImg.onload = function() {
+                // Hide placeholder and show image
+                const placeholder = img.parentElement.querySelector('.image-placeholder');
+                if (placeholder) {
+                  placeholder.classList.add('hidden');
+                }
+                
+                // Set the actual image source
+                img.src = img.dataset.src;
+                img.classList.remove('lazy');
+                img.classList.add('loaded');
+                
+                // Clean up
+                img.removeAttribute('data-src');
+              };
+              newImg.onerror = function() {
+                // Handle image load error
+                const placeholder = img.parentElement.querySelector('.image-placeholder');
+                if (placeholder) {
+                  placeholder.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999;">Failed to load image</div>';
+                }
+              };
+              newImg.src = img.dataset.src;
+              
               imageObserver.unobserve(img);
             }
           }
         });
+      }, {
+        rootMargin: '50px 0px', // Start loading 50px before the image comes into view
+        threshold: 0.01
       });
 
       // Observe all images with data-src attribute
@@ -326,8 +353,13 @@
     } else {
       // Fallback for browsers without IntersectionObserver
       document.querySelectorAll('img[data-src]').forEach(img => {
+        const placeholder = img.parentElement.querySelector('.image-placeholder');
+        if (placeholder) {
+          placeholder.classList.add('hidden');
+        }
         img.src = img.dataset.src;
         img.classList.remove('lazy');
+        img.classList.add('loaded');
       });
     }
   }

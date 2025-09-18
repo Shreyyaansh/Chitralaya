@@ -8,6 +8,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari&family=Playfair+Display&display=swap"
       rel="stylesheet"/>
     <link rel="stylesheet" href="chitra.css" />
+    <script src="config.js"></script>
     <script src="script.js"></script>
   </head>
 
@@ -216,7 +217,15 @@
 
 
       // Load product data from URL parameters
-      window.onload = function() {
+      window.addEventListener('load', function() {
+        // Check user login status first
+        if (typeof checkUserStatus === 'function') {
+          checkUserStatus();
+        }
+        
+        // Update cart counter
+        updateCartCounter();
+        
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id');
         
@@ -224,7 +233,30 @@
           // Load product data based on ID
           loadProductData(productId);
         }
-      };
+      });
+
+      // Update cart counter function
+      function updateCartCounter() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const cartCountElement = document.getElementById('cart-count');
+        if (cartCountElement) {
+          cartCountElement.textContent = totalItems;
+          cartCountElement.style.display = totalItems > 0 ? 'flex' : 'none';
+        }
+      }
+
+      // Listen for cart changes
+      window.addEventListener('storage', function(e) {
+        if (e.key === 'cart') {
+          updateCartCounter();
+        }
+      });
+      
+      // Listen for custom cart update events
+      window.addEventListener('cartUpdated', function() {
+        updateCartCounter();
+      });
 
       async function loadProductData(productId) {
         try {
@@ -306,6 +338,5 @@
         }
       }
     </script>
-    <script src="config.js"></script>
   </body>
 </html>
