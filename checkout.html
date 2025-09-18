@@ -171,6 +171,7 @@
                                         <input type="checkbox" id="saveAddress" name="saveAddress">
                                         Save this address for future orders
                                     </label>
+                                    <div id="address-save-status" style="display: none; margin-top: 10px; padding: 8px; border-radius: 4px; font-size: 14px;"></div>
                                 </div>
 
                                 <div class="checkout-actions">
@@ -856,6 +857,29 @@
                     // Clear all form errors
                     clearAllFormErrors();
                     
+                    // Save address if checkbox is checked or if no saved address was used
+                    const savedAddressSelect = document.getElementById('savedAddresses');
+                    const saveAddressCheckbox = document.getElementById('saveAddress');
+                    
+                    console.log('UPI Payment - Address saving logic:', {
+                        checkboxExists: !!saveAddressCheckbox,
+                        checkboxChecked: saveAddressCheckbox ? saveAddressCheckbox.checked : false,
+                        savedAddressSelectValue: savedAddressSelect ? savedAddressSelect.value : 'null',
+                        shippingAddress: orderData.shippingAddress
+                    });
+                    
+                    if (saveAddressCheckbox && saveAddressCheckbox.checked) {
+                        // User explicitly wants to save this address
+                        console.log('UPI Payment - Saving address because checkbox is checked');
+                        await saveAddressFromCheckout(orderData.shippingAddress);
+                    } else if (!savedAddressSelect || !savedAddressSelect.value || savedAddressSelect.value === 'new') {
+                        // Auto-save the address if it's not from a saved address (existing behavior)
+                        console.log('UPI Payment - Auto-saving address because no saved address was used');
+                        await autoSaveAddressFromOrder(orderData.shippingAddress);
+                    } else {
+                        console.log('UPI Payment - Not saving address - using saved address');
+                    }
+                    
                     // Calculate total amount
                     const cart = JSON.parse(localStorage.getItem('cart')) || [];
                     const totalAmount = cart.reduce((sum, item) => {
@@ -1000,7 +1024,7 @@
                         // User explicitly wants to save this address
                         console.log('Saving address because checkbox is checked');
                         await saveAddressFromCheckout(orderData.shippingAddress);
-                    } else if (!savedAddressSelect.value || savedAddressSelect.value === 'new') {
+                    } else if (!savedAddressSelect || !savedAddressSelect.value || savedAddressSelect.value === 'new') {
                         // Auto-save the address if it's not from a saved address (existing behavior)
                         console.log('Auto-saving address because no saved address was used');
                         await autoSaveAddressFromOrder(orderData.shippingAddress);
@@ -1184,6 +1208,16 @@
                     return; // User not logged in, skip saving
                 }
 
+                // Show saving status
+                const statusDiv = document.getElementById('address-save-status');
+                if (statusDiv) {
+                    statusDiv.style.display = 'block';
+                    statusDiv.style.background = '#fff3cd';
+                    statusDiv.style.color = '#856404';
+                    statusDiv.style.border = '1px solid #ffeaa7';
+                    statusDiv.textContent = 'Saving address...';
+                }
+
                 // Validate that all required fields are present
                 const requiredFields = ['fullName', 'email', 'phone', 'address', 'city', 'state', 'pincode'];
                 const missingFields = requiredFields.filter(field => !shippingAddress[field] || shippingAddress[field].trim() === '');
@@ -1252,22 +1286,18 @@
                     const responseData = await response.json();
                     console.log('Address save response:', responseData);
                     
-                    // Show success message to user
-                    const successMessage = document.createElement('div');
-                    successMessage.className = 'success-message';
-                    successMessage.textContent = 'Address saved successfully!';
-                    successMessage.style.cssText = 'background: #d4edda; color: #155724; padding: 10px; margin: 10px 0; border-radius: 4px; border: 1px solid #c3e6cb;';
-                    
-                    // Insert the message before the form
-                    const form = document.getElementById('checkout-form');
-                    form.parentNode.insertBefore(successMessage, form);
-                    
-                    // Remove the message after 3 seconds
-                    setTimeout(() => {
-                        if (successMessage.parentNode) {
-                            successMessage.parentNode.removeChild(successMessage);
-                        }
-                    }, 3000);
+                    // Show success status
+                    if (statusDiv) {
+                        statusDiv.style.background = '#d4edda';
+                        statusDiv.style.color = '#155724';
+                        statusDiv.style.border = '1px solid #c3e6cb';
+                        statusDiv.textContent = 'Address saved successfully!';
+                        
+                        // Hide status after 3 seconds
+                        setTimeout(() => {
+                            statusDiv.style.display = 'none';
+                        }, 3000);
+                    }
                     
                     // Reload the saved addresses to update the dropdown
                     loadSavedAddresses();
@@ -1276,10 +1306,36 @@
                     console.error('Failed to save address:', errorData.message);
                     console.error('Response status:', response.status);
                     console.error('Response headers:', response.headers);
+                    
+                    // Show error status
+                    if (statusDiv) {
+                        statusDiv.style.background = '#f8d7da';
+                        statusDiv.style.color = '#721c24';
+                        statusDiv.style.border = '1px solid #f5c6cb';
+                        statusDiv.textContent = 'Failed to save address. Please try again.';
+                        
+                        // Hide status after 5 seconds
+                        setTimeout(() => {
+                            statusDiv.style.display = 'none';
+                        }, 5000);
+                    }
                 }
             } catch (error) {
                 console.error('Error saving address from checkout:', error);
-                // Don't show error to user as this is a background operation
+                
+                // Show error status
+                const statusDiv = document.getElementById('address-save-status');
+                if (statusDiv) {
+                    statusDiv.style.background = '#f8d7da';
+                    statusDiv.style.color = '#721c24';
+                    statusDiv.style.border = '1px solid #f5c6cb';
+                    statusDiv.textContent = 'Error saving address. Please try again.';
+                    
+                    // Hide status after 5 seconds
+                    setTimeout(() => {
+                        statusDiv.style.display = 'none';
+                    }, 5000);
+                }
             }
         }
 
@@ -1296,6 +1352,70 @@
             };
             
             console.log('Testing address saving with:', testAddress);
+            await saveAddressFromCheckout(testAddress);
+        };
+
+        // Test function to check current form state
+        window.checkFormState = function() {
+            const savedAddressSelect = document.getElementById('savedAddresses');
+            const saveAddressCheckbox = document.getElementById('saveAddress');
+            const addressInputFields = document.getElementById('address-input-fields');
+            const saveAddressGroup = document.getElementById('save-address-group');
+            
+            console.log('Current form state:', {
+                savedAddressSelectValue: savedAddressSelect ? savedAddressSelect.value : 'null',
+                saveAddressCheckboxExists: !!saveAddressCheckbox,
+                saveAddressCheckboxChecked: saveAddressCheckbox ? saveAddressCheckbox.checked : false,
+                addressInputFieldsDisplay: addressInputFields ? addressInputFields.style.display : 'null',
+                saveAddressGroupDisplay: saveAddressGroup ? saveAddressGroup.style.display : 'null',
+                formData: {
+                    fullName: document.getElementById('fullName')?.value || 'null',
+                    email: document.getElementById('email')?.value || 'null',
+                    phone: document.getElementById('phone')?.value || 'null',
+                    address: document.getElementById('address')?.value || 'null',
+                    city: document.getElementById('city')?.value || 'null',
+                    state: document.getElementById('state')?.value || 'null',
+                    pincode: document.getElementById('pincode')?.value || 'null'
+                }
+            });
+        };
+
+        // Test function to simulate form submission with address saving
+        window.testAddressSavingFromForm = async function() {
+            // Fill form with test data
+            document.getElementById('fullName').value = 'Test User';
+            document.getElementById('email').value = 'test@example.com';
+            document.getElementById('phone').value = '+919876543210';
+            document.getElementById('address').value = '123 Test Street, Test Area';
+            document.getElementById('city').value = 'Test City';
+            document.getElementById('state').value = 'Test State';
+            document.getElementById('pincode').value = '123456';
+            
+            // Check the save address checkbox
+            const saveAddressCheckbox = document.getElementById('saveAddress');
+            if (saveAddressCheckbox) {
+                saveAddressCheckbox.checked = true;
+            }
+            
+            // Set address selection to "new"
+            const savedAddressSelect = document.getElementById('savedAddresses');
+            if (savedAddressSelect) {
+                savedAddressSelect.value = 'new';
+            }
+            
+            console.log('Form filled with test data, checkbox checked, testing address saving...');
+            
+            // Test the address saving function
+            const testAddress = {
+                fullName: 'Test User',
+                email: 'test@example.com',
+                phone: '+919876543210',
+                address: '123 Test Street, Test Area',
+                city: 'Test City',
+                state: 'Test State',
+                pincode: '123456'
+            };
+            
             await saveAddressFromCheckout(testAddress);
         };
 
