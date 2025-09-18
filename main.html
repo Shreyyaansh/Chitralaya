@@ -142,8 +142,15 @@
     // Load products from API
     async function loadProducts() {
       try {
+        console.log('Loading products from:', window.API_BASE_URL);
+        console.log('Full API URL:', `${window.API_BASE_URL}/products`);
+        
         const response = await fetch(`${window.API_BASE_URL}/products`);
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        
         const data = await response.json();
+        console.log('Response data:', data);
         
         if (data.success) {
           allProducts = data.data.products;
@@ -158,6 +165,11 @@
         }
       } catch (error) {
         console.error('Error loading products:', error);
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          apiUrl: window.API_BASE_URL
+        });
         showErrorMessage('Error loading products. Please check if the server is running.');
       }
     }
