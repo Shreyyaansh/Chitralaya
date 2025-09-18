@@ -142,15 +142,8 @@
     // Load products from API
     async function loadProducts() {
       try {
-        console.log('Loading products from:', window.API_BASE_URL);
-        console.log('Full API URL:', `${window.API_BASE_URL}/products`);
-        
         const response = await fetch(`${window.API_BASE_URL}/products`);
-        console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
-        
         const data = await response.json();
-        console.log('Response data:', data);
         
         if (data.success) {
           allProducts = data.data.products;
@@ -164,20 +157,14 @@
           showErrorMessage('Failed to load products');
         }
       } catch (error) {
-        console.error('Error loading products:', error);
-        console.error('Error details:', {
-          message: error.message,
-          stack: error.stack,
-          apiUrl: window.API_BASE_URL
-        });
         showErrorMessage('Error loading products. Please check if the server is running.');
       }
     }
 
-    // Preload critical images for better performance
+    // Preload first few images for instant display
     function preloadCriticalImages(products) {
-      // Only preload the first 3 images to avoid overwhelming the network
-      const criticalProducts = products.slice(0, 3);
+      // Preload only the first 2 images for instant display
+      const criticalProducts = products.slice(0, 4);
       
       criticalProducts.forEach(product => {
         if (product.images && product.images[0]) {
@@ -185,7 +172,6 @@
           link.rel = 'preload';
           link.as = 'image';
           link.href = product.images[0];
-          link.fetchPriority = 'high';
           document.head.appendChild(link);
         }
       });
@@ -200,9 +186,6 @@
         const productElement = createProductElement(product, index);
         gallery.appendChild(productElement);
       });
-
-      // Re-initialize lazy loading for new images
-      initLazyLoading();
     }
 
     // Product mapping to preserve original styling
@@ -243,20 +226,17 @@
       const mainImage = product.images[0];
       const hoverImage = product.images[1] || product.images[0];
       
-      // Use original images directly for better performance
+      // Use compressed images directly for fast loading
       const getOptimizedImageUrl = (imagePath) => {
         if (!imagePath) return '';
-        // Return original image path without optimization for now
+        // Return compressed image path directly
         return imagePath;
       };
 
       div.innerHTML = `
         <div class="artwork-image ${styleInfo.adjustClass}">
-          <div class="image-placeholder">
-            <div class="skeleton-loader"></div>
-          </div>
-          <img data-src="${getOptimizedImageUrl(mainImage)}" alt="${product.name}" class="main-img lazy" style="object-position: ${product.imagePosition || 'center'};" loading="lazy" width="400" height="400">
-          <img data-src="${getOptimizedImageUrl(hoverImage)}" alt="${product.name} Detail" class="hover-img lazy" style="object-position: ${product.imagePosition || 'center'};" loading="lazy" width="400" height="400">
+          <img src="${getOptimizedImageUrl(mainImage)}" alt="${product.name}" class="main-img" style="object-position: ${product.imagePosition || 'center'};" width="400" height="400">
+          <img src="${getOptimizedImageUrl(hoverImage)}" alt="${product.name} Detail" class="hover-img" style="object-position: ${product.imagePosition || 'center'};" width="400" height="400">
         </div>
         <div class="artwork-info">
           <h3 class="artwork-title">${product.name}</h3>

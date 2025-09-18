@@ -19,8 +19,8 @@
         // Initialize product page functionality
         initProductPage();
         
-        // Initialize lazy loading for images
-        initLazyLoading();
+        // Initialize simple image optimization
+        optimizeImageLoading();
         
         // Initialize performance monitoring
         initPerformanceMonitoring();
@@ -141,17 +141,10 @@
         const userLink = document.getElementById('user-link');
         const userText = document.getElementById('user-text');
         
-        console.log('Checking user status...', { 
-          token: token ? 'exists' : 'missing', 
-          apiUrl: window.API_BASE_URL,
-          currentPage: window.location.pathname,
-          timestamp: new Date().toISOString()
-        });
         
         if (token) {
           try {
             // Verify token with server
-            console.log('Making request to:', `${window.API_BASE_URL}/auth/profile`);
             const response = await fetch(`${window.API_BASE_URL}/auth/profile`, {
               method: 'GET',
               headers: {
@@ -160,9 +153,7 @@
               }
             });
 
-            console.log('Response status:', response.status);
             const data = await response.json();
-            console.log('Response data:', data);
 
             if (data.success) {
               const user = data.data.user;
@@ -181,7 +172,6 @@
               userLink.onclick = null;
             }
           } catch (error) {
-            console.error('Error checking user status:', error);
             // Clear invalid token
             localStorage.removeItem('authToken');
             localStorage.removeItem('currentUser');
@@ -303,65 +293,16 @@
       updateCartCounter();
     });
 
-  // Enhanced lazy loading for images
-  function initLazyLoading() {
-    if ('IntersectionObserver' in window) {
-      const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const img = entry.target;
-            if (img.dataset.src) {
-              // Create a new image to preload
-              const newImg = new Image();
-              newImg.onload = function() {
-                // Hide placeholder and show image
-                const placeholder = img.parentElement.querySelector('.image-placeholder');
-                if (placeholder) {
-                  placeholder.classList.add('hidden');
-                }
-                
-                // Set the actual image source
-                img.src = img.dataset.src;
-                img.classList.remove('lazy');
-                img.classList.add('loaded');
-                
-                // Clean up
-                img.removeAttribute('data-src');
-              };
-              newImg.onerror = function() {
-                // Handle image load error
-                const placeholder = img.parentElement.querySelector('.image-placeholder');
-                if (placeholder) {
-                  placeholder.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999;">Failed to load image</div>';
-                }
-              };
-              newImg.src = img.dataset.src;
-              
-              imageObserver.unobserve(img);
-            }
-          }
-        });
-      }, {
-        rootMargin: '200px 0px', // Start loading 200px before the image comes into view
-        threshold: 0.01
-      });
-
-      // Observe all images with data-src attribute
-      document.querySelectorAll('img[data-src]').forEach(img => {
-        imageObserver.observe(img);
-      });
-    } else {
-      // Fallback for browsers without IntersectionObserver
-      document.querySelectorAll('img[data-src]').forEach(img => {
-        const placeholder = img.parentElement.querySelector('.image-placeholder');
-        if (placeholder) {
-          placeholder.classList.add('hidden');
-        }
-        img.src = img.dataset.src;
-        img.classList.remove('lazy');
-        img.classList.add('loaded');
-      });
-    }
+  // Simple image optimization for compressed images
+  function optimizeImageLoading() {
+    // Add loading="lazy" to images that are not in viewport
+    const images = document.querySelectorAll('img:not([loading])');
+    images.forEach((img, index) => {
+      // Only lazy load images beyond the first 4 (they're already preloaded)
+      if (index > 3) {
+        img.loading = 'lazy';
+      }
+    });
   }
 
   // Performance monitoring
@@ -371,14 +312,14 @@
       // Largest Contentful Paint
       new PerformanceObserver((entryList) => {
         for (const entry of entryList.getEntries()) {
-          console.log('LCP:', entry.startTime);
+          // Send to analytics service in production
         }
       }).observe({ entryTypes: ['largest-contentful-paint'] });
 
       // First Input Delay
       new PerformanceObserver((entryList) => {
         for (const entry of entryList.getEntries()) {
-          console.log('FID:', entry.processingStart - entry.startTime);
+          // Send to analytics service in production
         }
       }).observe({ entryTypes: ['first-input'] });
 
@@ -386,16 +327,16 @@
       new PerformanceObserver((entryList) => {
         for (const entry of entryList.getEntries()) {
           if (!entry.hadRecentInput) {
-            console.log('CLS:', entry.value);
+            // Send to analytics service in production
           }
         }
       }).observe({ entryTypes: ['layout-shift'] });
     }
 
-    // Log page load time
+    // Monitor page load time for analytics
     window.addEventListener('load', () => {
       const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
-      console.log('Page load time:', loadTime + 'ms');
+      // Send to analytics service in production
     });
   }
   
@@ -406,13 +347,11 @@
 
 // Error handling and reporting
 window.addEventListener('error', function(e) {
-  console.error('JavaScript error:', e.error);
-  // In production, you might want to send this to an error reporting service
+  // Send to error reporting service in production
 });
 
 window.addEventListener('unhandledrejection', function(e) {
-  console.error('Unhandled promise rejection:', e.reason);
-  // In production, you might want to send this to an error reporting service
+  // Send to error reporting service in production
 });
 
 // End of script
