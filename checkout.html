@@ -622,6 +622,12 @@
             const savedAddressSelect = document.getElementById('savedAddresses');
             let shippingAddress;
             
+            console.log('Form data collection:', {
+                savedAddressSelectValue: savedAddressSelect ? savedAddressSelect.value : 'null',
+                selectedAddressData: selectedAddressData,
+                formDataEntries: Array.from(formData.entries())
+            });
+            
             if (savedAddressSelect && savedAddressSelect.value && savedAddressSelect.value !== 'new' && selectedAddressData) {
                 // Use saved address data
                 shippingAddress = {
@@ -633,6 +639,7 @@
                     state: selectedAddressData.state,
                     pincode: selectedAddressData.pincode
                 };
+                console.log('Using saved address data:', shippingAddress);
             } else {
                 // Use form data for new address (when "new" is selected or no address is selected)
                 shippingAddress = {
@@ -644,6 +651,7 @@
                     state: formData.get('state'),
                     pincode: formData.get('pincode')
                 };
+                console.log('Using form data for new address:', shippingAddress);
             }
             
             // Prepare order data for API
@@ -1176,6 +1184,16 @@
                     return; // User not logged in, skip saving
                 }
 
+                // Validate that all required fields are present
+                const requiredFields = ['fullName', 'email', 'phone', 'address', 'city', 'state', 'pincode'];
+                const missingFields = requiredFields.filter(field => !shippingAddress[field] || shippingAddress[field].trim() === '');
+                
+                if (missingFields.length > 0) {
+                    console.error('Missing required fields for address saving:', missingFields);
+                    console.error('Shipping address data:', shippingAddress);
+                    return;
+                }
+
                 // Check if this address already exists
                 const existingAddressesResponse = await fetch(`${window.API_BASE_URL}/addresses`, {
                     headers: {
@@ -1231,6 +1249,9 @@
 
                 if (response.ok) {
                     console.log('Address saved successfully');
+                    const responseData = await response.json();
+                    console.log('Address save response:', responseData);
+                    
                     // Show success message to user
                     const successMessage = document.createElement('div');
                     successMessage.className = 'success-message';
@@ -1253,12 +1274,30 @@
                 } else {
                     const errorData = await response.json();
                     console.error('Failed to save address:', errorData.message);
+                    console.error('Response status:', response.status);
+                    console.error('Response headers:', response.headers);
                 }
             } catch (error) {
                 console.error('Error saving address from checkout:', error);
                 // Don't show error to user as this is a background operation
             }
         }
+
+        // Test function to manually test address saving (can be called from browser console)
+        window.testAddressSaving = async function() {
+            const testAddress = {
+                fullName: 'Test User',
+                email: 'test@example.com',
+                phone: '+919876543210',
+                address: '123 Test Street',
+                city: 'Test City',
+                state: 'Test State',
+                pincode: '123456'
+            };
+            
+            console.log('Testing address saving with:', testAddress);
+            await saveAddressFromCheckout(testAddress);
+        };
 
         async function autoSaveAddressFromOrder(shippingAddress) {
             try {

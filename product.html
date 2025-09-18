@@ -219,8 +219,12 @@
       // Load product data from URL parameters
       window.addEventListener('load', function() {
         // Check user login status first
+        console.log('Product page loaded, checking user status...');
         if (typeof checkUserStatus === 'function') {
+          console.log('checkUserStatus function found, calling it...');
           checkUserStatus();
+        } else {
+          console.log('checkUserStatus function not found!');
         }
         
         // Update cart counter
