@@ -342,7 +342,7 @@
           }
         });
       }, {
-        rootMargin: '50px 0px', // Start loading 50px before the image comes into view
+        rootMargin: '200px 0px', // Start loading 200px before the image comes into view
         threshold: 0.01
       });
 

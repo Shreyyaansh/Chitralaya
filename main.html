@@ -176,12 +176,16 @@
 
     // Preload critical images for better performance
     function preloadCriticalImages(products) {
-      products.forEach(product => {
+      // Only preload the first 3 images to avoid overwhelming the network
+      const criticalProducts = products.slice(0, 3);
+      
+      criticalProducts.forEach(product => {
         if (product.images && product.images[0]) {
           const link = document.createElement('link');
           link.rel = 'preload';
           link.as = 'image';
           link.href = product.images[0];
+          link.fetchPriority = 'high';
           document.head.appendChild(link);
         }
       });
@@ -239,16 +243,11 @@
       const mainImage = product.images[0];
       const hoverImage = product.images[1] || product.images[0];
       
-      // Generate optimized image URLs using the ImageOptimizer
-      const optimizer = new ImageOptimizer();
+      // Use original images directly for better performance
       const getOptimizedImageUrl = (imagePath) => {
         if (!imagePath) return '';
-        return optimizer.getOptimizedUrl(imagePath, {
-          width: 400,
-          height: 400,
-          quality: 80,
-          format: 'webp'
-        });
+        // Return original image path without optimization for now
+        return imagePath;
       };
 
       div.innerHTML = `

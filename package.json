@@ -1,17 +1,20 @@
 {
-  "name": "chitralaya-frontend",
+  "name": "chitralaya-image-compression",
   "version": "1.0.0",
-  "description": "Frontend for Chitralaya art gallery",
-  "main": "main.html",
+  "description": "Image compression script for Chitralaya gallery",
+  "main": "compress-images.js",
   "scripts": {
-    "build": "echo 'Frontend build complete'",
-    "start": "echo 'Frontend ready'"
+    "compress": "node compress-images.js",
+    "install-sharp": "npm install sharp"
+  },
+  "dependencies": {
+    "sharp": "^0.32.6"
   },
   "keywords": [
-    "art",
-    "gallery",
-    "frontend",
-    "static"
+    "image",
+    "compression",
+    "webp",
+    "jpeg"
   ],
   "author": "Chitralaya",
   "license": "MIT"
