@@ -4,7 +4,6 @@
 
 A beautiful, full-stack e-commerce platform showcasing original artworks with a modern, responsive design and complete user authentication system.
 
-> **⚠️ Note**: This is a portfolio demonstration project. The artwork and application are for showcase purposes only.
 
 ![Chitralaya Banner](https://img.shields.io/badge/Chitralaya-Art%20Gallery-orange?style=for-the-badge&logo=artstation)
 ![Node.js](https://img.shields.io/badge/Node.js-18+-green?style=for-the-badge&logo=node.js)
