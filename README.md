@@ -98,79 +98,6 @@ This is a **portfolio demonstration** of a full-stack e-commerce art gallery bui
 - Database integration
 - Security best practices
 
-## 📁 Project Structure
-
-```
-chitralaya/
-├── 📁 assets/                    # Static assets
-│   ├── 📁 canvas/               # Canvas painting images
-│   ├── 📁 sketch/               # Sketch artwork images
-│   ├── 📁 color paint/          # Watercolor painting images
-│   └── 📄 *.png, *.jpeg         # UI icons and backgrounds
-├── 📁 server/                   # Backend application
-│   ├── 📁 config/               # Configuration files
-│   │   ├── 📄 database.js       # MongoDB connection
-│   │   └── 📄 config.env        # Environment variables
-│   ├── 📁 controllers/          # Route controllers
-│   │   └── 📄 authController.js # Authentication logic
-│   ├── 📁 middleware/           # Custom middleware
-│   │   └── 📄 auth.js           # JWT authentication
-│   ├── 📁 models/               # Database models
-│   │   └── 📄 User.js           # User schema
-│   ├── 📁 routes/               # API routes
-│   │   └── 📄 auth.js           # Authentication routes
-│   ├── 📄 server.js             # Main server file
-│   └── 📄 package.json          # Backend dependencies
-├── 📄 main.html                 # Homepage with gallery
-├── 📄 login.html                # Authentication page
-├── 📄 product.html              # Product details page
-├── 📄 cart.html                 # Shopping cart page
-├── 📄 checkout.html             # Checkout page
-├── 📄 profile.html              # User profile page
-├── 📄 chitra.css                # Main stylesheet
-├── 📄 auth.css                  # Authentication styles
-├── 📄 script.js                 # Main JavaScript
-├── 📄 auth.js                   # Authentication JavaScript
-├── 📄 SETUP_INSTRUCTIONS.md     # Detailed setup guide
-└── 📄 README.md                 # This file
-```
-
-## 🎨 Artwork Collection
-
-### **Canvas Paintings**
-- **Radha Krishna** - Divine love and spiritual devotion
-- **Serene Walkway Landscape** - Peaceful natural beauty
-- **Divine Krishna** - Sacred artwork with spiritual essence
-- **Majestic Peacock** - Elegant bird in full glory
-
-### **Charcoal Sketches**
-- **Divine Ganesha Portrait** - Detailed elephant-headed deity
-- **Mystical Liquid Drip** - Intriguing ritualistic artwork
-- **Serene Young Girl** - Contemplative portrait
-- **Elegant Traditional Woman** - Graceful traditional beauty
-- **Majestic Tiger Portrait** - Powerful wildlife art
-
-### **Watercolor Paintings**
-- **Serene Mountain River** - Alpine landscape with emerald waters
-- **Ancient Stone Pavilion** - Traditional Indian architecture
-- **Divine Shiva and Parvati** - Sacred couple in embrace
-- **Charming House** - Architectural beauty
-- **Graceful Bird** - Nature's elegance
-
-## 🔧 API Endpoints
-
-### **Authentication**
-```http
-POST /api/auth/register    # User registration
-POST /api/auth/login       # User login
-GET  /api/auth/profile     # Get user profile
-POST /api/auth/logout      # User logout
-```
-
-### **Health Check**
-```http
-GET  /health               # Server health status
-```
 
 ## 🛡️ Security Features
 
@@ -182,26 +109,7 @@ GET  /health               # Server health status
 - **Helmet.js** for security headers
 - **Environment Variables** for sensitive data
 
-## 🔒 Security Best Practices
 
-### **Environment Variables**
-- ✅ **Never commit** `.env` or `config.env` files to Git
-- ✅ Use `config.env.example` as a template
-- ✅ Generate strong JWT secrets for production
-- ✅ Use different secrets for development and production
-
-### **Production Security**
-- 🔐 **Change default JWT secret** before deployment
-- 🔐 **Use MongoDB Atlas** with proper authentication
-- 🔐 **Enable HTTPS** in production
-- 🔐 **Set strong CORS policies** for production domains
-- 🔐 **Use environment-specific configurations**
-
-### **Git Security**
-- 🚫 **Never commit** sensitive files
-- 🚫 **Use .gitignore** to exclude environment files
-- 🚫 **Rotate secrets** if accidentally committed
-- 🚫 **Review commits** before pushing
 
 ## 📱 Responsive Design
 
@@ -219,53 +127,6 @@ GET  /health               # Server health status
 - **Edge** 80+
 - **Mobile Browsers** (iOS Safari, Chrome Mobile)
 
-## 🚀 Deployment
-
-### **Frontend Deployment**
-- **Netlify**: Drag and drop the root folder
-- **Vercel**: Connect your GitHub repository
-- **GitHub Pages**: Enable in repository settings
-
-### **Backend Deployment**
-- **Heroku**: Connect GitHub and deploy
-- **Railway**: One-click deployment
-- **DigitalOcean**: App Platform deployment
-
-### **Database**
-- **MongoDB Atlas**: Free cloud database
-- **Railway MongoDB**: Alternative cloud option
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📚 Documentation
-
-- **[Setup Guide](setup.md)** - Quick start and detailed setup instructions
-- **[Contributing](CONTRIBUTING.md)** - Guidelines for contributing to the project
-- **[API Documentation](#-api-endpoints)** - Complete API reference
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👥 Contact
-
-- **Email**: mannu131376@gmail.com
-- **Instagram**: [@pratishtha0605](https://instagram.com/pratishtha0605)
-- **Website**: [Chitralaya](http://localhost:5500/main.html)
-
-## 🙏 Acknowledgments
-
-- **Artist**: All artworks created with love and creativity
-- **Fonts**: Google Fonts (Playfair Display, Noto Sans Devanagari)
-- **Icons**: Custom SVG icons and emojis
-- **Inspiration**: Traditional Indian art and modern web design
-
 ---
 
 <div align="center">
@@ -274,7 +135,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 *चित्रालय - Where Colors Speak* 🎨
 
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/chitralaya?style=social)](https://github.com/yourusername/chitralaya)
-[![GitHub forks](https://img.shields.io/github/forks/yourusername/chitralaya?style=social)](https://github.com/yourusername/chitralaya)
 
 </div>
