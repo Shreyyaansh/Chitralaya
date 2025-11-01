@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeAdminPanel();
 });
 
-function initializeAdminPanel() {
+async function initializeAdminPanel() {
     // Check if user is logged in
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -21,11 +21,21 @@ function initializeAdminPanel() {
         return;
     }
 
-    // Check if user has admin privileges (simple check)
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (!currentUser.email || !isAdminUser(currentUser.email)) {
-        alert('Access denied. Admin privileges required.');
-        window.location.href = 'main.html';
+    // Check if user has admin privileges based on server profile (do NOT trust localStorage)
+    try {
+        const profile = await getServerUserProfile(token);
+        const emailFromServer = profile?.email || profile?.user?.email;
+        if (!emailFromServer || !isAdminUser(emailFromServer)) {
+            alert('Access denied. Admin privileges required.');
+            window.location.href = 'main.html';
+            return;
+        }
+    } catch (err) {
+        console.error('Failed to verify user profile:', err);
+        alert('Session invalid. Please login again.');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+        window.location.href = 'login.html';
         return;
     }
 
@@ -43,6 +53,23 @@ function isAdminUser(email) {
         // Add your admin email here
     ];
     return adminEmails.includes(email.toLowerCase());
+}
+
+// Retrieve the authenticated user's profile from the server to prevent client-side spoofing
+async function getServerUserProfile(token) {
+    const res = await fetch(`${window.API_BASE_URL}/auth/profile`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+    });
+    const data = await res.json();
+    if (!res.ok || !data?.success) {
+        throw new Error(data?.message || 'Unable to verify profile');
+    }
+    // Try to return a normalized profile object
+    return data.data?.user || data.user || data.data || {};
 }
 
 function setupEventListeners() {
