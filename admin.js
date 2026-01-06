@@ -97,6 +97,7 @@ function setupEventListeners() {
 
     // Order filters
     document.getElementById('order-status-filter').addEventListener('change', filterOrders);
+    
 
     // Image preview functionality
     setupImagePreviews();
@@ -133,8 +134,9 @@ function switchSection(section) {
         products: 'Products',
         orders: 'Orders',
         users: 'Users',
+        notifications: 'Notifications',
     };
-    document.getElementById('page-title').textContent = titles[section];
+    document.getElementById('page-title').textContent = titles[section] || 'Admin Panel';
 
     currentSection = section;
 
@@ -151,6 +153,9 @@ function switchSection(section) {
             break;
         case 'users':
             loadUsers();
+            break;
+        case 'notifications':
+            loadNotifications();
             break;
     }
 }
@@ -196,6 +201,12 @@ async function loadDashboard() {
 
         // Load recent orders
         loadRecentOrders(ordersData.data?.orders || []);
+        
+        // Load recent notifications
+        loadRecentNotifications();
+        
+        // Load notification count
+        updateNotificationBadge();
     } catch (error) {
         console.error('Error loading dashboard:', error);
         showError('Failed to load dashboard data');
@@ -257,9 +268,15 @@ function displayProducts(products) {
         return;
     }
 
-    container.innerHTML = products.map(product => `
+    container.innerHTML = products.map(product => {
+        // Get the first image from the images array, or use a placeholder
+        const productImage = (product.images && product.images.length > 0) 
+            ? product.images[0] 
+            : 'assets/favicon.svg'; // fallback image
+        
+        return `
         <div class="product-card">
-            <img src="${product.image}" alt="${product.name}" class="product-image">
+            <img src="${productImage}" alt="${product.name}" class="product-image" onerror="this.src='assets/favicon.svg'">
             <div class="product-info">
                 <h3>${product.name}</h3>
                 <p>${product.description}</p>
@@ -272,7 +289,8 @@ function displayProducts(products) {
                 </div>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function showAddProductModal() {
@@ -293,18 +311,12 @@ async function handleAddProduct(e) {
     const images = [];
     const mainImage = formData.get('mainImage');
     const hoverImage = formData.get('hoverImage');
-    const additionalImages = formData.getAll('additionalImages');
     
     if (mainImage && mainImage.size > 0) {
         images.push(mainImage);
     }
     if (hoverImage && hoverImage.size > 0) {
         images.push(hoverImage);
-    }
-    if (additionalImages && additionalImages.length > 0) {
-        additionalImages.forEach(img => {
-            if (img.size > 0) images.push(img);
-        });
     }
     
     // Create FormData for file upload
@@ -427,7 +439,10 @@ function displayOrders(orders) {
             <tbody>
                 ${orders.map(order => `
                     <tr>
-                        <td>#${order._id.slice(-6)}</td>
+                        <td>
+                            #${order._id.slice(-6)}
+                            ${order.isRepaintRequest ? '<span style="background: #d35400; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-left: 8px;">REPAINT REQUEST</span>' : ''}
+                        </td>
                         <td>${order.shippingAddress?.fullName || 'Unknown'}</td>
                         <td>${order.items?.length || 0} items</td>
                         <td>₹${order.totalAmount || 0}</td>
@@ -532,20 +547,37 @@ function displayOrderDetails(order) {
     });
 
     // Format items
-    const itemsHtml = order.items.map(item => `
+    const itemsHtml = order.items.map(item => {
+        // Get product image - handle both images array and single image
+        let productImage = 'assets/favicon.svg'; // default fallback
+        if (item.product?.images && Array.isArray(item.product.images) && item.product.images.length > 0) {
+            productImage = item.product.images[0];
+        } else if (item.product?.image) {
+            productImage = item.product.image;
+        }
+        
+        return `
         <div class="order-item-detail">
-            <img src="${item.product?.image || '/assets/placeholder.jpg'}" alt="${item.product?.name || 'Product'}" class="order-item-image">
+            <img src="${productImage}" alt="${item.product?.name || 'Product'}" class="order-item-image" onerror="this.src='assets/favicon.svg'; this.onerror=null;">
             <div class="order-item-info">
                 <h5>${item.product?.name || 'Unknown Product'}</h5>
                 <p><strong>Artist:</strong> ${item.product?.artist || 'Unknown'}</p>
                 <p><strong>Category:</strong> ${item.product?.category || 'Unknown'}</p>
                 <p><strong>Quantity:</strong> ${item.quantity}</p>
+                ${order.isRepaintRequest ? '<p style="color: #d35400; font-weight: 600;"><strong>🎨 Repaint Request</strong></p>' : ''}
             </div>
             <div class="order-item-price">₹${(item.product?.price || 0) * item.quantity}</div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 
     content.innerHTML = `
+        ${order.isRepaintRequest ? `
+        <div class="order-details-section" style="background: #fff3cd; border-left: 4px solid #d35400; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
+            <h4 style="color: #d35400; margin: 0 0 10px 0;">🎨 REPAINT REQUEST</h4>
+            <p style="margin: 0; color: #856404;">This is a repaint request. The customer wants the artist to create another copy of this artwork.</p>
+        </div>
+        ` : ''}
         <!-- Order Information -->
         <div class="order-details-section">
             <h4>📋 Order Information</h4>
@@ -692,28 +724,6 @@ function setupImagePreviews() {
         }
     });
 
-    // Additional images preview
-    const additionalImagesInput = document.getElementById('product-additional-images');
-    const additionalImagesPreview = document.getElementById('additional-images-preview');
-    
-    additionalImagesInput.addEventListener('change', function(e) {
-        const files = Array.from(e.target.files);
-        if (files.length > 0) {
-            additionalImagesPreview.innerHTML = '';
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.alt = 'Additional image preview';
-                    additionalImagesPreview.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
-        } else {
-            additionalImagesPreview.innerHTML = '<div class="preview-placeholder">No images selected</div>';
-        }
-    });
 }
 
 // Users functions
@@ -806,6 +816,262 @@ async function toggleUserStatus(userId, currentStatus) {
     }
 }
 
+// Notifications functions
+let notifications = [];
+
+async function loadNotifications() {
+    try {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch(`${window.API_BASE_URL}/notifications`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            notifications = data.data.notifications;
+            displayNotifications(notifications);
+            updateNotificationBadge();
+        } else {
+            showError('Failed to load notifications');
+        }
+    } catch (error) {
+        console.error('Error loading notifications:', error);
+        showError('Failed to load notifications');
+    }
+}
+
+function displayNotifications(notificationsList) {
+    const container = document.getElementById('notifications-table');
+    
+    if (notificationsList.length === 0) {
+        container.innerHTML = '<p>No notifications found</p>';
+        return;
+    }
+
+    container.innerHTML = `
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${notificationsList.map(notification => `
+                    <tr class="${!notification.isRead ? 'unread-notification' : ''}">
+                        <td>${new Date(notification.createdAt).toLocaleDateString()}</td>
+                        <td>${notification.user?.firstname || ''} ${notification.user?.lastname || ''}</td>
+                        <td>${notification.product?.name || 'Unknown Product'}</td>
+                        <td>
+                            <span style="background: #d35400; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">
+                                ${notification.type === 'repaint_request' ? 'Repaint Request' : notification.type}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn-edit" onclick="viewNotificationDetails('${notification._id}')">View</button>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+}
+
+
+async function viewNotificationDetails(notificationId) {
+    try {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch(`${window.API_BASE_URL}/notifications/${notificationId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            displayNotificationDetails(data.data.notification);
+        } else {
+            showError('Failed to load notification details');
+        }
+    } catch (error) {
+        console.error('Error loading notification details:', error);
+        showError('Failed to load notification details');
+    }
+}
+
+function displayNotificationDetails(notification) {
+    // Create or get modal
+    let modal = document.getElementById('notification-details-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'notification-details-modal';
+        modal.className = 'modal';
+        document.body.appendChild(modal);
+    }
+    
+    const product = notification.product || {};
+    const user = notification.user || {};
+    const productImage = (product.images && product.images[0]) || 'assets/favicon.svg';
+    
+    modal.innerHTML = `
+        <div class="modal-content order-details-modal">
+            <div class="modal-header">
+                <h3>Repaint Request Details</h3>
+                <span class="close" onclick="hideNotificationDetailsModal()">&times;</span>
+            </div>
+            <div class="notification-details-content">
+                <div class="notification-details-section" style="background: #fff3cd; border-left: 4px solid #d35400; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
+                    <h4 style="color: #d35400; margin: 0 0 10px 0;">🎨 REPAINT REQUEST</h4>
+                    <p style="margin: 0; color: #856404;">Customer has requested the artist to create another copy of this artwork.</p>
+                </div>
+                
+                <div class="notification-details-section">
+                    <h4>📋 Request Information</h4>
+                    <div class="order-details-grid">
+                        <div class="order-details-item">
+                            <strong>Request ID:</strong>
+                            <span>#${notification._id.slice(-6)}</span>
+                        </div>
+                        <div class="order-details-item">
+                            <strong>Request Date:</strong>
+                            <span>${new Date(notification.createdAt).toLocaleString('en-IN')}</span>
+                        </div>
+                        <div class="order-details-item">
+                            <strong>Read Status:</strong>
+                            <span>${notification.isRead ? 'Read' : 'Unread'}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="notification-details-section">
+                    <h4>👤 Customer Information</h4>
+                    <div class="order-details-grid">
+                        <div class="order-details-item">
+                            <strong>Name:</strong>
+                            <span>${user.firstname || ''} ${user.lastname || ''}</span>
+                        </div>
+                        <div class="order-details-item">
+                            <strong>Email:</strong>
+                            <span>${user.email || 'N/A'}</span>
+                        </div>
+                        <div class="order-details-item">
+                            <strong>Phone:</strong>
+                            <span>${user.phone || 'N/A'}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="notification-details-section">
+                    <h4>🖼️ Product Information</h4>
+                    <div class="order-item-detail">
+                        <img src="${productImage}" alt="${product.name || 'Product'}" class="order-item-image">
+                        <div class="order-item-info">
+                            <h5>${product.name || 'Unknown Product'}</h5>
+                            <p><strong>Artist:</strong> ${product.artist || 'Unknown'}</p>
+                            <p><strong>Category:</strong> ${product.category || 'Unknown'}</p>
+                            <p><strong>Price:</strong> ₹${product.price || 0}</p>
+                            ${product.size ? `<p><strong>Size:</strong> ${product.size}</p>` : ''}
+                            ${product.medium ? `<p><strong>Medium:</strong> ${product.medium}</p>` : ''}
+                            ${product.description ? `<p><strong>Description:</strong> ${product.description}</p>` : ''}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="notification-details-section">
+                    <h4>📝 Message</h4>
+                    <p>${notification.message || 'No additional message'}</p>
+                </div>
+                
+                <div class="form-actions" style="margin-top: 20px;">
+                    <button class="btn-secondary" onclick="hideNotificationDetailsModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    modal.style.display = 'block';
+}
+
+function hideNotificationDetailsModal() {
+    const modal = document.getElementById('notification-details-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+
+async function loadRecentNotifications() {
+    try {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch(`${window.API_BASE_URL}/notifications?limit=5`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            displayRecentNotifications(data.data.notifications || []);
+        }
+    } catch (error) {
+        // Silently handle error
+    }
+}
+
+function displayRecentNotifications(notifications) {
+    const container = document.getElementById('recent-notifications-list');
+    if (!container) return;
+    
+    if (notifications.length === 0) {
+        container.innerHTML = '<p style="color: #999; padding: 20px; text-align: center;">No repaint requests yet</p>';
+        return;
+    }
+    
+    container.innerHTML = notifications.map(notification => {
+        const product = notification.product || {};
+        const user = notification.user || {};
+        return `
+            <div class="order-item" style="padding: 15px; border-bottom: 1px solid #e0e0e0; ${!notification.isRead ? 'background: #fff3cd;' : ''}">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div>
+                        <strong>${product.name || 'Unknown Product'}</strong>
+                        <p style="margin: 5px 0; color: #666; font-size: 0.9rem;">
+                            Requested by: ${user.firstname || ''} ${user.lastname || ''}
+                        </p>
+                        <p style="margin: 5px 0; color: #999; font-size: 0.85rem;">
+                            ${new Date(notification.createdAt).toLocaleDateString()}
+                        </p>
+                    </div>
+                    <button class="btn-edit" onclick="viewNotificationDetails('${notification._id}')" style="margin-left: 10px;">View</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+async function updateNotificationBadge() {
+    try {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch(`${window.API_BASE_URL}/notifications/count`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            const badge = document.getElementById('notification-badge');
+            if (badge) {
+                if (data.data.count > 0) {
+                    badge.textContent = data.data.count;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+    } catch (error) {
+        // Silently handle error
+    }
+}
+
 
 // Utility functions
 function showSuccess(message) {
@@ -840,6 +1106,7 @@ function editProduct(productId) {
     document.getElementById('edit-product-artist').value = product.artist || '';
     document.getElementById('edit-product-size').value = product.size || '';
     document.getElementById('edit-product-medium').value = product.medium || '';
+    document.getElementById('edit-product-stock').value = product.stock || 0;
     document.getElementById('edit-product-image-position').value = product.imagePosition || 'center';
     document.getElementById('edit-product-is-active').value = product.isActive ? 'true' : 'false';
 
@@ -919,6 +1186,7 @@ async function handleEditProduct(e) {
         artist: formData.get('artist'),
         size: formData.get('size'),
         medium: formData.get('medium'),
+        stock: parseInt(formData.get('stock')) || 0,
         imagePosition: imagePosition,
         isActive: formData.get('isActive') === 'true'
     };

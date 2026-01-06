@@ -621,8 +621,74 @@
             
             // Check if a saved address is selected
             const savedAddressSelect = document.getElementById('savedAddresses');
+            const savedAddressesSection = document.getElementById('saved-addresses-section');
             let shippingAddress;
             
+            // Validate that an address is selected (only if the saved addresses section is visible)
+            if (savedAddressesSection && savedAddressesSection.style.display !== 'none' && savedAddressSelect) {
+                if (!savedAddressSelect.value || savedAddressSelect.value === '') {
+                    // Show visual error message
+                    const alertMessage = 'Please select an address or choose "Use New Address" to continue.';
+                    showAddressSelectionError(alertMessage);
+                    
+                    savedAddressSelect.focus();
+                    savedAddressSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Add visual highlight
+                    savedAddressSelect.style.border = '2px solid #dc3545';
+                    savedAddressSelect.style.boxShadow = '0 0 0 3px rgba(220, 53, 69, 0.25)';
+                    setTimeout(() => {
+                        savedAddressSelect.style.border = '';
+                        savedAddressSelect.style.boxShadow = '';
+                    }, 3000);
+                    return;
+                }
+                
+                // If a saved address is selected (not "new"), make sure we have the address data
+                if (savedAddressSelect.value !== 'new' && !selectedAddressData) {
+                    // Show visual error message
+                    const alertMessage = 'Please wait for the address to load, or select "Use New Address" to continue.';
+                    showAddressSelectionError(alertMessage);
+                    
+                    savedAddressSelect.focus();
+                    savedAddressSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Add visual highlight
+                    savedAddressSelect.style.border = '2px solid #dc3545';
+                    savedAddressSelect.style.boxShadow = '0 0 0 3px rgba(220, 53, 69, 0.25)';
+                    setTimeout(() => {
+                        savedAddressSelect.style.border = '';
+                        savedAddressSelect.style.boxShadow = '';
+                    }, 3000);
+                    return;
+                }
+            }
+            
+            // Helper function to show visual error message
+            function showAddressSelectionError(message) {
+                // Remove any existing error message
+                const existingError = document.getElementById('address-selection-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
+                // Create error message element
+                const errorDiv = document.createElement('div');
+                errorDiv.id = 'address-selection-error';
+                errorDiv.style.cssText = 'background: #f8d7da; color: #721c24; padding: 12px 16px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #dc3545; font-weight: 500;';
+                errorDiv.textContent = '⚠️ ' + message;
+                
+                // Insert error message before the form
+                const checkoutForm = document.getElementById('checkout-form');
+                if (checkoutForm && checkoutForm.parentNode) {
+                    checkoutForm.parentNode.insertBefore(errorDiv, checkoutForm);
+                    
+                    // Remove error message after 5 seconds
+                    setTimeout(() => {
+                        if (errorDiv.parentNode) {
+                            errorDiv.remove();
+                        }
+                    }, 5000);
+                }
+            }
             
             if (savedAddressSelect && savedAddressSelect.value && savedAddressSelect.value !== 'new' && selectedAddressData) {
                 // Use saved address data
@@ -636,7 +702,7 @@
                     pincode: selectedAddressData.pincode
                 };
             } else {
-                // Use form data for new address (when "new" is selected or no address is selected)
+                // Use form data for new address (when "new" is selected)
                 shippingAddress = {
                     fullName: formData.get('fullName'),
                     email: formData.get('email'),
@@ -812,10 +878,47 @@
                     // Redirect to home page
                     window.location.href = 'main.html';
                 } else {
-                    alert('Payment verification failed. Please contact support.');
+                    // Payment verification failed - delete the order
+                    await deleteOrder(orderId, token);
+                    alert('Payment verification failed. Please try again.');
+                    window.location.href = 'cart.html';
                 }
             } catch (error) {
-                alert('Payment verification failed. Please contact support.');
+                // Payment verification failed - try to delete the order
+                if (orderId) {
+                    await deleteOrder(orderId, token);
+                }
+                alert('Payment verification failed. Please try again.');
+                window.location.href = 'cart.html';
+            }
+        }
+        
+        // Handle payment failure/cancellation
+        async function handlePaymentFailure(orderId, token, reason) {
+            try {
+                // Delete the order if it was created
+                if (orderId) {
+                    await deleteOrder(orderId, token);
+                }
+            } catch (error) {
+                // Silently handle deletion errors
+            }
+            
+            alert('Payment failed. Please try again.');
+            window.location.href = 'cart.html';
+        }
+        
+        // Delete order function
+        async function deleteOrder(orderId, token) {
+            try {
+                await fetch(`${window.API_BASE_URL}/orders/${orderId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+            } catch (error) {
+                // Silently handle deletion errors
             }
         }
         
@@ -918,6 +1021,7 @@
                         }
                         
                         // Initialize Razorpay
+                        const orderId = data.data.order._id;
                         const options = {
                             key: keyData.data.key,
                             amount: razorpayData.data.amount,
@@ -927,7 +1031,13 @@
                             order_id: razorpayData.data.id,
                             handler: function (response) {
                                 // Payment successful
-                                handlePaymentSuccess(response, data.data.order._id, token, razorpayData.data.id);
+                                handlePaymentSuccess(response, orderId, token, razorpayData.data.id);
+                            },
+                            modal: {
+                                ondismiss: function() {
+                                    // Payment modal closed without payment
+                                    handlePaymentFailure(orderId, token, 'Payment cancelled');
+                                }
                             },
                             prefill: {
                                 name: orderData.shippingAddress.fullName,
@@ -944,14 +1054,23 @@
                         
                         try {
                             const rzp = new Razorpay(options);
+                            
+                            // Handle payment failure events
+                            rzp.on('payment.failed', function(response) {
+                                handlePaymentFailure(orderId, token, response.error.description || 'Payment failed');
+                            });
+                            
                             rzp.open();
                             
                             // Reset button state
                             submitBtn.textContent = originalText;
                             submitBtn.disabled = false;
                         } catch (rzpError) {
-                            console.error('Razorpay initialization error:', rzpError);
-                            throw new Error('Failed to initialize payment gateway');
+                            // If Razorpay initialization fails, delete the order
+                            await deleteOrder(orderId, token);
+                            alert('Payment failed. Please try again.');
+                            window.location.href = 'cart.html';
+                            return;
                         }
                         
                     } else {
@@ -961,12 +1080,22 @@
                     throw new Error(data.message || 'Failed to create order');
                 }
             } catch (error) {
-                console.error('Error in UPI payment:', error);
-                alert(`UPI Payment Error: ${error.message}`);
+                // If order was created but payment failed, delete it
+                let createdOrderId = null;
+                try {
+                    if (data && data.success && data.data && data.data.order && data.data.order._id) {
+                        createdOrderId = data.data.order._id;
+                    }
+                } catch (e) {
+                    // Ignore errors accessing data
+                }
                 
-                // Reset button state
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
+                if (createdOrderId) {
+                    await deleteOrder(createdOrderId, token);
+                }
+                
+                alert('Payment failed. Please try again.');
+                window.location.href = 'cart.html';
             }
         }
         
@@ -1054,6 +1183,8 @@
                         document.getElementById('saved-addresses-section').style.display = 'block';
                         document.getElementById('address-input-fields').style.display = 'none';
                         document.getElementById('save-address-group').style.display = 'none';
+                        // Remove required attribute from hidden fields
+                        removeRequiredFromAddressFields();
                     } else {
                         // When no saved addresses exist, show the form fields and save checkbox
                         populateSavedAddressesDropdown([]);
@@ -1062,6 +1193,8 @@
                         document.getElementById('save-address-group').style.display = 'block';
                         // Auto-select "Use New Address" option
                         document.getElementById('savedAddresses').value = 'new';
+                        // Add required attribute back to visible fields
+                        addRequiredToAddressFields();
                     }
                 } else {
                     // Even with error, show the form fields and save checkbox
@@ -1071,6 +1204,8 @@
                     document.getElementById('save-address-group').style.display = 'block';
                     // Auto-select "Use New Address" option
                     document.getElementById('savedAddresses').value = 'new';
+                    // Add required attribute back to visible fields
+                    addRequiredToAddressFields();
                 }
             } catch (error) {
                 console.error('Error loading saved addresses:', error);
@@ -1081,7 +1216,30 @@
                 document.getElementById('save-address-group').style.display = 'block';
                 // Auto-select "Use New Address" option
                 document.getElementById('savedAddresses').value = 'new';
+                // Add required attribute back to visible fields
+                addRequiredToAddressFields();
             }
+        }
+        
+        // Helper functions to manage required attributes
+        function removeRequiredFromAddressFields() {
+            const requiredFields = ['address', 'city', 'state', 'pincode', 'fullName', 'email', 'phone'];
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.removeAttribute('required');
+                }
+            });
+        }
+        
+        function addRequiredToAddressFields() {
+            const requiredFields = ['address', 'city', 'state', 'pincode', 'fullName', 'email', 'phone'];
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.setAttribute('required', 'required');
+                }
+            });
         }
 
         function populateSavedAddressesDropdown(addresses) {
@@ -1106,26 +1264,33 @@
         function loadSavedAddress() {
             const select = document.getElementById('savedAddresses');
             const addressId = select.value;
+            const addressInputFields = document.getElementById('address-input-fields');
             
             if (!addressId) {
                 // If no address selected, hide the address input fields and save checkbox
-                document.getElementById('address-input-fields').style.display = 'none';
+                addressInputFields.style.display = 'none';
                 document.getElementById('save-address-group').style.display = 'none';
+                // Remove required attribute from hidden fields to prevent validation errors
+                removeRequiredFromAddressFields();
                 selectedAddressData = null;
                 return;
             }
 
             if (addressId === 'new') {
                 // If "Use New Address" is selected, show the address input fields and save checkbox
-                document.getElementById('address-input-fields').style.display = 'block';
+                addressInputFields.style.display = 'block';
                 document.getElementById('save-address-group').style.display = 'block';
+                // Add required attribute back to visible fields
+                addRequiredToAddressFields();
                 selectedAddressData = null;
                 return;
             }
 
             // Hide the address input fields and save checkbox when using a saved address
-            document.getElementById('address-input-fields').style.display = 'none';
+            addressInputFields.style.display = 'none';
             document.getElementById('save-address-group').style.display = 'none';
+            // Remove required attribute from hidden fields to prevent validation errors
+            removeRequiredFromAddressFields();
 
             // Fetch the full address details for the selected saved address
             fetchAddressDetails(addressId);

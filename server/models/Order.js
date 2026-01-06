@@ -87,6 +87,10 @@ const orderSchema = new mongoose.Schema({
   notes: {
     type: String,
     trim: true
+  },
+  isRepaintRequest: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true

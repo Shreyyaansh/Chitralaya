@@ -156,6 +156,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/addresses', addressRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/razorpay', razorpayRoutes);
+app.use('/api/notifications', require('./routes/notifications'));
 
 // Serve static files (for both development and production)
 app.use(express.static(path.join(__dirname, '..')));

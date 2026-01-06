@@ -234,8 +234,17 @@
         return imagePath;
       };
 
+      // Check if product is sold out (stock is 0 or undefined/null)
+      const isSoldOut = !product.stock || product.stock === 0;
+      
+      // Add sold-out class to the item if sold out
+      if (isSoldOut) {
+        div.classList.add('sold-out');
+      }
+      
       div.innerHTML = `
         <div class="artwork-image ${styleInfo.adjustClass}">
+          ${isSoldOut ? '<span class="sold-out-badge">Sold Out</span>' : ''}
           <img src="${getOptimizedImageUrl(mainImage)}" alt="${product.name}" class="main-img" style="object-position: ${product.imagePosition || 'center'};" width="400" height="400">
           <img src="${getOptimizedImageUrl(hoverImage)}" alt="${product.name} Detail" class="hover-img" style="object-position: ${product.imagePosition || 'center'};" width="400" height="400">
         </div>
@@ -243,6 +252,7 @@
           <h3 class="artwork-title">${product.name}</h3>
           <div class="artwork-price">
             <span class="current-price">Rs. ${product.price.toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+            ${isSoldOut ? '<span class="sold-out-text">Available on request</span>' : ''}
           </div>
         </div>
       `;

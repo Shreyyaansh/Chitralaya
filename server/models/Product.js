@@ -40,7 +40,7 @@ const productSchema = new mongoose.Schema({
   },
   artist: {
     type: String,
-    default: 'Chitralaya Artist'
+    default: 'Pratishtha Sharma'
   },
   size: {
     type: String,
@@ -62,6 +62,11 @@ const productSchema = new mongoose.Schema({
     type: String,
     default: 'center',
     trim: true
+  },
+  stock: {
+    type: Number,
+    default: 0,
+    min: [0, 'Stock cannot be negative']
   }
 }, {
   timestamps: true // Adds createdAt and updatedAt fields

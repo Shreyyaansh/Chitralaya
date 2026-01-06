@@ -1,6 +1,68 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 
+// @desc    Create repaint request
+// @route   POST /api/orders/repaint
+// @access  Private
+exports.createRepaintRequest = async (req, res) => {
+  try {
+    const { productId } = req.body;
+    const userId = req.user._id;
+
+    if (!productId) {
+      return res.status(400).json({ success: false, message: 'Product ID is required' });
+    }
+
+    // Get product
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    // Get user's default address or create minimal address
+    const User = require('../models/User');
+    const user = await User.findById(userId);
+    
+    // Create repaint request order
+    const order = new Order({
+      user: userId,
+      items: [{
+        product: product._id,
+        quantity: 1,
+        price: product.price
+      }],
+      totalAmount: product.price,
+      shippingAddress: {
+        fullName: `${user.firstname} ${user.lastname}`,
+        email: user.email,
+        phone: user.phone || 'Not provided',
+        address: 'To be provided',
+        city: 'To be provided',
+        state: 'To be provided',
+        pincode: 'To be provided'
+      },
+      paymentMethod: 'cod',
+      paymentStatus: 'pending',
+      orderStatus: 'pending',
+      isRepaintRequest: true,
+      notes: `Repaint request for: ${product.name}`
+    });
+
+    await order.save();
+    await order.populate('items.product');
+
+    res.status(201).json({
+      success: true,
+      message: 'Repaint request sent successfully',
+      data: { order: order.getPublicData() }
+    });
+
+  } catch (error) {
+    console.error('Error creating repaint request:', error);
+    res.status(500).json({ success: false, message: 'Server error while creating repaint request' });
+  }
+};
+
 // @desc    Create new order
 // @route   POST /api/orders
 // @access  Private
@@ -143,6 +205,47 @@ exports.updateOrderStatus = async (req, res) => {
   } catch (error) {
     console.error('Error updating order:', error);
     res.status(500).json({ success: false, message: 'Server error while updating order' });
+  }
+};
+
+// @desc    Delete order
+// @route   DELETE /api/orders/:id
+// @access  Private
+exports.deleteOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const userId = req.user._id;
+
+    const order = await Order.findOne({ _id: orderId, user: userId });
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found'
+      });
+    }
+
+    // Only allow deletion of pending payment orders
+    if (order.paymentStatus !== 'pending') {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot delete order with completed payment'
+      });
+    }
+
+    await Order.findByIdAndDelete(orderId);
+
+    res.json({
+      success: true,
+      message: 'Order deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while deleting order'
+    });
   }
 };
 

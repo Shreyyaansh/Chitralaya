@@ -27,6 +27,9 @@
                 <a href="#" class="nav-item" data-section="users">
                     👥 Users
                 </a>
+                <a href="#" class="nav-item" data-section="notifications">
+                    🔔 Notifications <span id="notification-badge" class="notification-badge" style="display: none;">0</span>
+                </a>
             </nav>
             <div class="admin-footer">
                 <a href="main.html" class="back-btn">← Back to Site</a>
@@ -68,10 +71,18 @@
                         <div class="stat-number" id="paid-orders">-</div>
                     </div>
                 </div>
-                <div class="recent-orders">
-                    <h3>Recent Orders</h3>
-                    <div id="recent-orders-list" class="orders-list">
-                        <!-- Recent orders will be loaded here -->
+                <div class="dashboard-grid">
+                    <div class="recent-orders">
+                        <h3>Recent Orders</h3>
+                        <div id="recent-orders-list" class="orders-list">
+                            <!-- Recent orders will be loaded here -->
+                        </div>
+                    </div>
+                    <div class="recent-notifications">
+                        <h3>Recent Repaint Requests</h3>
+                        <div id="recent-notifications-list" class="notifications-list">
+                            <!-- Recent notifications will be loaded here -->
+                        </div>
                     </div>
                 </div>
             </section>
@@ -115,6 +126,16 @@
                 </div>
                 <div class="users-table" id="users-table">
                     <!-- Users will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Notifications Section -->
+            <section id="notifications" class="content-section">
+                <div class="section-header">
+                    <h2>Repaint Requests & Notifications</h2>
+                </div>
+                <div class="notifications-table" id="notifications-table">
+                    <!-- Notifications will be loaded here -->
                 </div>
             </section>
 
@@ -185,13 +206,6 @@
                     <input type="file" id="product-hover-image" name="hoverImage" accept="image/*">
                     <small class="form-help">This image will show when user hovers over the product card</small>
                     <div id="hover-image-preview" class="image-preview"></div>
-                </div>
-
-                <div class="form-group">
-                    <label for="product-additional-images">Additional Images (Optional)</label>
-                    <input type="file" id="product-additional-images" name="additionalImages" accept="image/*" multiple>
-                    <small class="form-help">Select multiple images for additional product views</small>
-                    <div id="additional-images-preview" class="image-preview"></div>
                 </div>
 
                 <!-- Simple Image Positioning -->
@@ -285,6 +299,12 @@
                         <label for="edit-product-medium">Medium (Optional)</label>
                         <input type="text" id="edit-product-medium" name="medium">
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-product-stock">Stock Quantity</label>
+                    <input type="number" id="edit-product-stock" name="stock" min="0" step="1" value="0">
+                    <small class="form-help">Number of items available in stock</small>
                 </div>
 
                 <!-- Simple Image Positioning -->

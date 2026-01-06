@@ -565,6 +565,43 @@ h1 {
         border-top: 1px solid #f8f9fa;
       }
 
+      /* Sold Out Styles - Gentle and Subtle */
+      .sold-out-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #d35400;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        font-family: "Noto Sans Devanagari", serif;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        text-shadow: 0 2px 4px rgba(211, 84, 0, 0.3);
+      }
+
+      .sold-out-text {
+        display: block;
+        color: #d35400;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-top: 6px;
+        font-family: "Noto Sans Devanagari", serif;
+        text-shadow: 0 1px 2px rgba(211, 84, 0, 0.2);
+      }
+
+      .artwork-item.sold-out {
+        opacity: 0.92;
+      }
+
+      .artwork-item.sold-out:hover {
+        transform: translateY(-4px);
+      }
+
       .artwork-title {
         font-size: 1.2rem;
         font-weight: 600;
@@ -1058,6 +1095,21 @@ h1 {
         color: #d35400;
       }
 
+      .add-to-cart-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed !important;
+        background: #f8f9fa;
+        color: #999;
+        border-color: #e9ecef;
+      }
+
+      .add-to-cart-btn:disabled:hover {
+        background: #f8f9fa;
+        border-color: #e9ecef;
+        color: #999;
+        transform: none;
+      }
+
       .buy-now-btn {
         background: #d35400;
         color: white;
@@ -1066,6 +1118,10 @@ h1 {
       .buy-now-btn:hover {
         background: #c0392b;
         transform: translateY(-2px);
+      }
+
+      .repaint-message {
+        margin-top: 15px;
       }
 
       .shipping-info {
