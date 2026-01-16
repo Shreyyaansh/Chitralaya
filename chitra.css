@@ -143,6 +143,171 @@ h1 {
         color: #f8f9fa;
       }
       
+      .footer-bottom p {
+        margin-bottom: 15px;
+      }
+      
+      /* Policy Links in Footer - Horizontal and Subtle */
+      .footer-bottom .policy-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 15px;
+      }
+      
+      .footer-bottom .policy-links a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s ease;
+      }
+      
+      .footer-bottom .policy-links a:hover {
+        color: white;
+        text-decoration: underline;
+      }
+      
+      .footer-bottom .policy-links .separator {
+        color: rgba(255, 255, 255, 0.5);
+        margin: 0 4px;
+        font-size: 0.9rem;
+      }
+      
+      /* Policy Pages Styling */
+      .policy-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+        min-height: calc(100vh - 200px);
+      }
+      
+      .policy-content {
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      .policy-content h1 {
+        color: #2c3e50;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        border-bottom: 3px solid #5189d1;
+        padding-bottom: 15px;
+      }
+      
+      .policy-content .last-updated {
+        color: #666;
+        font-style: italic;
+        margin-bottom: 30px;
+        font-size: 0.9rem;
+      }
+      
+      .policy-content section {
+        margin-bottom: 40px;
+      }
+      
+      .policy-content section h2 {
+        color: #5189d1;
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+        margin-top: 30px;
+      }
+      
+      .policy-content section h3 {
+        color: #e48241;
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        margin-top: 20px;
+      }
+      
+      .policy-content section p {
+        color: #555;
+        line-height: 1.8;
+        margin-bottom: 15px;
+      }
+      
+      .policy-content section ul,
+      .policy-content section ol {
+        color: #555;
+        line-height: 1.8;
+        margin-left: 20px;
+        margin-bottom: 15px;
+      }
+      
+      .policy-content section li {
+        margin-bottom: 10px;
+      }
+      
+      .policy-content section a {
+        color: #5189d1;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+      
+      .policy-content section a:hover {
+        color: #e48241;
+        text-decoration: underline;
+      }
+      
+      .policy-footer {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 2px solid #eee;
+      }
+      
+      .back-link {
+        display: inline-block;
+        color: #5189d1;
+        text-decoration: none;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+      
+      .back-link:hover {
+        color: #e48241;
+        transform: translateX(-5px);
+      }
+      
+      .contact-info,
+      .contact-form-section,
+      .business-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+      
+      .contact-info ul,
+      .contact-form-section ul {
+        list-style: none;
+        margin-left: 0;
+      }
+      
+      .email-button {
+        display: inline-block;
+        background: linear-gradient(135deg, #5189d1 0%, #e48241 100%);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-top: 10px;
+      }
+      
+      .email-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(81, 137, 209, 0.4);
+      }
+      
+      .social-links-section {
+        margin-top: 20px;
+      }
+      
       /* Responsive footer */
       @media (max-width: 768px) {
         .footer-content {
@@ -153,6 +318,32 @@ h1 {
         
         .social-links {
           justify-content: center;
+        }
+        
+        .policy-container {
+          margin: 20px auto;
+          padding: 10px;
+        }
+        
+        .policy-content {
+          padding: 20px;
+        }
+        
+        .policy-content h1 {
+          font-size: 2rem;
+        }
+        
+        .policy-content section h2 {
+          font-size: 1.5rem;
+        }
+        
+        .footer-bottom .policy-links {
+          flex-direction: column;
+          gap: 5px;
+        }
+        
+        .footer-bottom .policy-links .separator {
+          display: none;
         }
       }
       .navbar {
@@ -2586,3 +2777,879 @@ h1 {
           justify-content: flex-start;
         }
       }
+
+/* ============================================
+   COMPREHENSIVE MOBILE OPTIMIZATIONS
+   Only affects mobile devices (max-width: 768px)
+   Desktop layout remains unchanged
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* ========== NAVBAR MOBILE OPTIMIZATION ========== */
+  .navbar {
+    padding: 0.5rem 0.8rem !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    height: auto !important;
+    min-height: 50px !important;
+    max-height: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0.5rem !important;
+    padding-top: 0.5rem !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    display: flex !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+    z-index: 1000 !important;
+  }
+  
+  .logo {
+    font-size: 1.4rem !important;
+    flex: 0 0 auto !important;
+    min-width: 0;
+    margin-right: 0.5rem !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    align-self: center !important;
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    line-height: 1.2 !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  
+  .logo .icon {
+    font-size: 1.1rem !important;
+    margin-left: 0.3rem;
+  }
+  
+  .nav-links {
+    display: flex !important;
+    gap: 0.4rem !important;
+    flex-wrap: nowrap !important;
+    font-size: 0.75rem !important;
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .nav-links a {
+    padding: 0.3rem 0.5rem !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    line-height: 1.3 !important;
+    height: auto !important;
+    position: relative !important;
+    top: auto !important;
+    vertical-align: middle !important;
+    box-sizing: border-box !important;
+    color: #2c3e50 !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* Move user-actions from banner to navbar top right */
+  .banner .user-actions {
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    gap: 0.5rem;
+    margin-top: 0;
+    width: auto;
+    z-index: 100;
+  }
+  
+  .user-action-btn {
+    padding: 0.4rem 0.6rem !important;
+    font-size: 0.75rem;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    color: #2c3e50 !important;
+    display: flex !important;
+    align-items: center;
+    gap: 4px;
+    border: none !important;
+    outline: none !important;
+    text-decoration: none;
+  }
+  
+  .user-action-btn:focus,
+  .user-action-btn:active,
+  .user-action-btn:hover {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  .user-action-btn .icon-img {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  
+  .user-action-btn span {
+    display: inline !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+  }
+  
+  /* Ensure Login button text uses same font as Cart button */
+  #user-text {
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    color: #2c3e50 !important;
+  }
+  
+  .cart-count {
+    width: 14px !important;
+    height: 14px !important;
+    font-size: 0.6rem;
+    top: -2px;
+    right: -2px;
+    background: #e74c3c;
+  }
+  
+  /* Hide cart count if it's 0 or empty on mobile */
+  .cart-count:empty {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* Hide cart count when JavaScript sets display:none (when count is 0) */
+  #cart-count[style*="display: none"],
+  .cart-count[style*="display: none"] {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* On mobile, hide cart count by default and only show when JavaScript sets display:flex */
+  /* This ensures the "0" badge doesn't show on mobile */
+  #cart-count {
+    display: none !important;
+  }
+  
+  /* Only show cart count when JavaScript explicitly sets display:flex (count > 0) */
+  #cart-count[style*="display: flex"],
+  #cart-count[style*="display:block"] {
+    display: flex !important;
+    visibility: visible !important;
+  }
+
+  /* ========== BANNER MOBILE OPTIMIZATION ========== */
+  .banner {
+    height: 28vh !important;
+    padding: 1.5rem 1rem !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    max-width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 10px;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  .heading {
+    font-size: 2.5rem !important;
+    margin-top: 0.5rem;
+    text-align: center !important;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .heading .hi {
+    font-size: 2.2rem !important;
+    margin-bottom: 0.3rem;
+    text-align: center;
+  }
+  
+  .heading .en {
+    font-size: 0.9rem !important;
+    margin-top: 0.3rem;
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+  
+  .tagline {
+    margin-top: 1rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .tagline-text {
+    font-size: 0.75rem !important;
+    padding: 0 0.5rem;
+    text-align: center;
+  }
+
+  /* ========== PRODUCTS HEADING ========== */
+  .hehe {
+    font-size: 1.8rem;
+    margin: 20px 10px;
+    text-align: center;
+  }
+
+  /* ========== FILTER BUTTONS MOBILE ========== */
+  .filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 15px 10px;
+    margin: 0 10px;
+  }
+  
+  .filter-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+    border-radius: 20px;
+    min-width: auto;
+    flex: 1;
+    max-width: 120px;
+  }
+
+  /* ========== GALLERY MOBILE OPTIMIZATION ========== */
+  .gallery {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    padding: 0 10px !important;
+    margin-bottom: 40px !important;
+  }
+  
+  .artwork-item {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .artwork-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  /* ========== PRODUCT IMAGES MOBILE - LARGER & CLEARER ========== */
+  .artwork-image {
+    height: 220px !important;
+    width: 100%;
+    position: relative;
+    background: #f8f9fa;
+  }
+  
+  .artwork-image img,
+  .artwork-image .main-img,
+  .artwork-image .hover-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 0;
+  }
+  
+  /* Apply same manual positioning adjustments as desktop for mobile */
+  .artwork-image.adjust-position-1 .main-img,
+  .artwork-image.adjust-position-1 .hover-img,
+  .artwork-image.adjust-position-1 img {
+    object-position: center -30px !important;
+  }
+  
+  .artwork-image.adjust-position-2 .main-img,
+  .artwork-image.adjust-position-2 .hover-img,
+  .artwork-image.adjust-position-2 img {
+    object-position: center -55px !important;
+  }
+  
+  /* Specific product positioning for mobile (same as desktop) */
+  .artwork-item[data-product-name="Divine Ganesha Portrait"] .artwork-image .main-img,
+  .artwork-item[data-product-name="Divine Ganesha Portrait"] .artwork-image .hover-img {
+    object-position: center -80px !important;
+  }
+  
+  /* Respect inline styles from database (imagePosition) - these will override defaults */
+  /* Inline styles in HTML will take precedence, so manual adjustments work */
+  
+  /* Disable hover image swap on mobile - show main image only */
+  .artwork-item .hover-img {
+    display: none !important;
+  }
+  
+  .artwork-item:hover .main-img {
+    opacity: 1 !important;
+  }
+  
+  /* Better image quality on mobile */
+  .artwork-image .main-img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+
+  /* ========== PRODUCT INFO MOBILE ========== */
+  .artwork-info {
+    padding: 12px 10px !important;
+    border-top: 1px solid #e9ecef;
+  }
+  
+  .artwork-title {
+    font-size: 0.95rem !important;
+    font-weight: 600;
+    margin-bottom: 6px;
+    line-height: 1.3;
+    color: #2c3e50;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .artwork-price {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .current-price {
+    font-size: 1rem !important;
+    font-weight: 600;
+    color: #d35400;
+  }
+  
+  .sold-out-badge {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+  
+  .sold-out-text {
+    font-size: 0.75rem;
+  }
+
+  /* ========== PRODUCT PAGE MOBILE ========== */
+  .product-container {
+    padding: 15px 10px !important;
+    gap: 20px !important;
+  }
+  
+  .product-gallery {
+    gap: 15px;
+  }
+  
+  .main-image {
+    height: 350px !important;
+    border-radius: 10px;
+  }
+  
+  .main-image img {
+    object-fit: contain !important;
+  }
+  
+  .thumbnail-gallery {
+    gap: 8px;
+    padding: 8px 0;
+  }
+  
+  .thumbnail {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+  }
+  
+  .product-details h1 {
+    font-size: 1.6rem !important;
+    margin-bottom: 10px;
+  }
+  
+  .product-details {
+    padding: 15px 0;
+  }
+  
+  .price-section {
+    margin-bottom: 20px;
+  }
+  
+  .current-price {
+    font-size: 1.4rem !important;
+  }
+  
+  .quantity-selector {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  
+  .quantity-controls {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .add-to-cart-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+  }
+
+  /* ========== CART PAGE MOBILE ========== */
+  .cart-container {
+    padding: 15px 10px !important;
+  }
+  
+  .cart-item {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  .cart-item-image {
+    width: 100%;
+    max-width: 200px;
+    height: 200px;
+    margin: 0 auto;
+  }
+  
+  .cart-item-details {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .cart-item-actions {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .cart-summary {
+    margin-top: 20px;
+    padding: 15px;
+  }
+
+  /* ========== CHECKOUT MOBILE ========== */
+  .checkout-container {
+    padding: 15px 10px !important;
+  }
+  
+  .checkout-form {
+    padding: 15px;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .form-group {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  /* ========== PROFILE PAGE MOBILE ========== */
+  .profile-container {
+    padding: 15px 10px !important;
+  }
+  
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .profile-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+  
+  .profile-actions button {
+    width: 100%;
+  }
+
+  /* ========== FOOTER MOBILE (Already optimized but enhancing) ========== */
+  .footer {
+    padding: 30px 0 15px;
+    margin-top: 40px;
+  }
+  
+  .footer-content {
+    padding: 0 15px;
+    gap: 25px;
+  }
+  
+  .footer-section h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+  }
+  
+  .footer-section p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  
+  .social-links {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .social-link {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .footer-bottom {
+    padding-top: 20px;
+    margin-top: 20px;
+  }
+  
+  .footer-bottom p {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+  
+  .footer-bottom .policy-links {
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  
+  .footer-bottom .policy-links a {
+    font-size: 0.8rem;
+    padding: 2px 0;
+  }
+
+  /* ========== POLICY PAGES MOBILE ========== */
+  .policy-container {
+    margin: 20px auto;
+    padding: 10px;
+  }
+  
+  .policy-content {
+    padding: 20px 15px;
+    border-radius: 8px;
+  }
+  
+  .policy-content h1 {
+    font-size: 1.8rem !important;
+    margin-bottom: 8px;
+  }
+  
+  .policy-content .last-updated {
+    font-size: 0.8rem;
+    margin-bottom: 20px;
+  }
+  
+  .policy-content section {
+    margin-bottom: 30px;
+  }
+  
+  .policy-content section h2 {
+    font-size: 1.3rem !important;
+    margin-bottom: 12px;
+    margin-top: 25px;
+  }
+  
+  .policy-content section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    margin-top: 15px;
+  }
+  
+  .policy-content section p {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  
+  .policy-content section ul,
+  .policy-content section ol {
+    margin-left: 15px;
+    margin-bottom: 12px;
+  }
+  
+  .policy-content section li {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+  
+  .back-link {
+    font-size: 1rem;
+  }
+
+  /* ========== ADMIN PAGE MOBILE ========== */
+  .admin-container {
+    padding: 15px 10px !important;
+  }
+  
+  .admin-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .admin-stats {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .admin-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .admin-table table {
+    min-width: 600px;
+  }
+
+  /* ========== LOADING & ERROR MESSAGES MOBILE ========== */
+  .loading-message {
+    padding: 30px 15px;
+    font-size: 0.95rem;
+  }
+  
+  .error-message {
+    padding: 20px 15px;
+    font-size: 0.9rem;
+  }
+  
+  .retry-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    margin-top: 15px;
+  }
+
+  /* ========== GENERAL MOBILE IMPROVEMENTS ========== */
+  body {
+    padding-top: 120px !important;
+    font-size: 14px;
+    margin: 0 !important;
+  }
+  
+  /* Remove any margin/padding beneath navbar and before banner */
+  .navbar + * {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  
+  /* Ensure banner starts right after navbar - override base margin-top: 30px */
+  .banner {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  
+  /* Remove any spacing from elements between navbar and banner */
+  .navbar ~ .banner {
+    margin-top: 0 !important;
+  }
+  
+  /* Override base banner margin-top with higher specificity */
+  body > .banner,
+  #home.banner {
+    margin-top: 0 !important;
+  }
+  
+  /* Adjust scroll margin for smaller navbar */
+  #home, #gallery, #about, #contact {
+    scroll-margin-top: 50px;
+  }
+  
+  /* Remove any red outline/border from buttons */
+  .user-action-btn * {
+    outline: none !important;
+    border: none !important;
+  }
+  
+  .cart-btn {
+    outline: none !important;
+    border: none !important;
+  }
+  
+  .cart-btn:focus,
+  .cart-btn:active {
+    outline: none !important;
+    border: none !important;
+  }
+  
+  /* Better touch targets */
+  button, a, input, select, textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Prevent text size adjustment on iOS */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+  
+  /* Smooth scrolling on mobile */
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Better image loading */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Remove hover effects on touch devices */
+  @media (hover: none) {
+    .artwork-item:hover {
+      transform: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+/* ========== EXTRA SMALL MOBILE (max-width: 480px) ========== */
+@media (max-width: 480px) {
+  .gallery {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+    padding: 0 10px !important;
+  }
+  
+  .artwork-image {
+    height: 280px !important;
+  }
+  
+  .artwork-title {
+    font-size: 1rem !important;
+  }
+  
+  .current-price {
+    font-size: 1.1rem !important;
+  }
+  
+  .navbar {
+    padding: 0.5rem 0.8rem;
+  }
+  
+  .logo {
+    font-size: 1.2rem;
+  }
+  
+  .nav-links {
+    font-size: 0.75rem;
+    gap: 0.3rem;
+  }
+  
+  .nav-links a {
+    padding: 0.3rem 0.5rem;
+  }
+  
+  .banner {
+    height: 25vh !important;
+    padding: 1.2rem 0.8rem !important;
+    max-width: 95%;
+  }
+  
+  .heading {
+    font-size: 2rem !important;
+  }
+  
+  .heading .hi {
+    font-size: 1.8rem !important;
+  }
+  
+  .heading .en {
+    font-size: 0.8rem !important;
+  }
+  
+  .tagline-text {
+    font-size: 0.7rem !important;
+  }
+  
+  .navbar {
+    padding: 0.4rem 0.8rem !important;
+  }
+  
+  .logo {
+    font-size: 1.3rem !important;
+  }
+  
+  .nav-links {
+    font-size: 0.65rem;
+    gap: 0.25rem;
+  }
+  
+  .nav-links a {
+    padding: 0.2rem 0.35rem;
+  }
+  
+  .user-action-btn {
+    padding: 0.35rem 0.5rem !important;
+    font-size: 0.7rem;
+  }
+  
+  .user-action-btn .icon-img {
+    width: 16px !important;
+    height: 16px !important;
+  }
+  
+  .user-action-btn span {
+    font-size: 0.65rem;
+  }
+  
+  .hehe {
+    font-size: 1.5rem;
+    margin: 15px 8px;
+  }
+  
+  .filter-buttons {
+    padding: 12px 8px;
+    gap: 0.4rem;
+  }
+  
+  .filter-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    max-width: 100px;
+  }
+  
+  .main-image {
+    height: 300px !important;
+  }
+  
+  .thumbnail {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .product-details h1 {
+    font-size: 1.4rem !important;
+  }
+  
+  .footer-section h3 {
+    font-size: 1.1rem;
+  }
+  
+  .footer-section p {
+    font-size: 0.85rem;
+  }
+}
